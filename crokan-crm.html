@@ -294,7 +294,7 @@ tbody tr:hover td{background:var(--blue-50)}
           <div class="kpi amber"><div class="kpi-label">Pedidos pendientes</div><div class="kpi-value" id="kpi-pendientes">—</div><div class="kpi-sub">Esperando confirmación</div></div>
           <div class="kpi pink"><div class="kpi-label">Total pedidos</div><div class="kpi-value" id="kpi-total-pedidos">—</div><div class="kpi-sub">Todos los estados</div></div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
+        <div style="display:flex;flex-direction:column;gap:1.25rem">
           <div class="card">
             <div class="card-header"><div class="card-title">🧾 Últimos pedidos</div><button class="btn btn-ghost btn-sm" onclick="goTo('pedidos')">Ver todos →</button></div>
             <div id="dash-pedidos-wrap"><span class="spinner"></span></div>
@@ -684,9 +684,9 @@ function renderPedidos(list){
           <td>${estadoBadge(p.estado)}</td>
           <td>${fmtDate(p.created_at)}</td>
           <td><div class="td-actions">
-            <button class="btn btn-ghost btn-xs" onclick='verPedido(${JSON.stringify(p).replace(/'/g,"&#39;")})'>Ver</button>
+            <button class="btn btn-ghost btn-xs" onclick="verPedidoById('${p.id}')">Ver</button>
             ${p.estado==='pendiente'?`
-              <button class="btn btn-success btn-xs" onclick="confirmarPedido('${p.id}','${p.user_id}',${JSON.stringify(p.pedido_items).replace(/'/g,"&#39;")})">✓</button>
+              <button class="btn btn-success btn-xs" onclick="confirmarPedidoById('${p.id}')">✓</button>
               <button class="btn btn-danger btn-xs" onclick="cancelarPedido('${p.id}')">✕</button>`
             : p.estado==='confirmado'?`<button class="btn btn-danger btn-xs" onclick="cancelarPedido('${p.id}')">Cancelar</button>`:''}
           </div></td>
@@ -701,6 +701,16 @@ function filterPedidos(){
     const nombre = p._user ? `${p._user.nombre||''} ${p._user.apellido||''} ${p._user.email||''}`.toLowerCase() : p.user_id;
     return (!q || nombre.includes(q) || p.id.toLowerCase().includes(q)) && (!est || p.estado===est);
   }));
+}
+ 
+function verPedidoById(id){
+  const p = allPedidos.find(x=>x.id===id);
+  if(p) verPedido(p);
+}
+ 
+async function confirmarPedidoById(id){
+  const p = allPedidos.find(x=>x.id===id);
+  if(p) await confirmarPedido(p.id, p.user_id, p.pedido_items);
 }
  
 function verPedido(p){
@@ -777,7 +787,7 @@ function verPedido(p){
     <!-- ACCIONES -->
     ${p.estado==='pendiente'?`
     <div style="display:flex;gap:.75rem;margin-top:1.25rem;flex-wrap:wrap">
-      <button class="btn btn-success" style="flex:1;justify-content:center;min-width:160px" onclick="confirmarPedido('${p.id}','${p.user_id}',${JSON.stringify(p.pedido_items).replace(/'/g,"&#39;")});closeModal('modal-pedido')">✓ Confirmar y activar acceso</button>
+      <button class="btn btn-success" style="flex:1;justify-content:center;min-width:160px" onclick="confirmarPedidoById('${p.id}');closeModal('modal-pedido')">✓ Confirmar y activar acceso</button>
       <button class="btn btn-danger" style="min-width:100px;justify-content:center" onclick="cancelarPedido('${p.id}');closeModal('modal-pedido')">✕ Cancelar</button>
     </div>`
     : p.estado==='confirmado'?`
@@ -861,28 +871,35 @@ async function loadUsuarios(){
  
   const [usersRes, accesosRes] = await Promise.all([
     sb.rpc('get_users_metadata'),
-    sb.from('accesos').select('user_id').eq('activo',true)
+    sb.from('accesos')
+      .select('user_id, activo, producto:productos(nombre,icono)')
+      .eq('activo',true)
   ]);
  
   const users = usersRes.data||[];
   const accesosMap = {};
   (accesosRes.data||[]).forEach(a=>{
-    accesosMap[a.user_id] = (accesosMap[a.user_id]||0)+1;
+    if(!accesosMap[a.user_id]) accesosMap[a.user_id]=[];
+    accesosMap[a.user_id].push(`${a.producto?.icono||'📦'} ${a.producto?.nombre||'—'}`);
   });
  
   document.getElementById('usuarios-loading').style.display='none';
   document.getElementById('usuarios-body').innerHTML = !users.length
     ? '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">👥</div><div class="empty-title">Sin usuarias aún</div></div></td></tr>'
-    : users.map(u=>`<tr>
-        <td><div class="td-name">${[u.nombre,u.apellido].filter(Boolean).join(' ')||'—'}</div></td>
-        <td class="td-email">${u.email||'—'}</td>
-        <td style="font-size:.8rem;color:var(--gray-700)">${u.telefono||'—'}</td>
-        <td style="font-size:.8rem;color:var(--gray-700)">${u.pais||'—'}</td>
-        <td style="font-size:.78rem;color:var(--gray-400)">${fmtDate(u.created_at)}</td>
-        <td>${accesosMap[u.id]
-          ? `<span class="badge badge-blue">${accesosMap[u.id]} acceso${accesosMap[u.id]!==1?'s':''}</span>`
-          : '<span class="badge badge-gray">Sin accesos</span>'}</td>
-      </tr>`).join('');
+    : users.map(u=>{
+        const prods = accesosMap[u.id];
+        const prodsHtml = prods?.length
+          ? prods.map(p=>`<div style="font-size:.72rem;color:var(--gray-700);white-space:nowrap">${p}</div>`).join('')
+          : '<span class="badge badge-gray">Sin accesos</span>';
+        return `<tr>
+          <td><div class="td-name">${[u.nombre,u.apellido].filter(Boolean).join(' ')||'—'}</div></td>
+          <td class="td-email">${u.email||'—'}</td>
+          <td style="font-size:.8rem;color:var(--gray-700)">${u.telefono||'—'}</td>
+          <td style="font-size:.8rem;color:var(--gray-700)">${u.pais||'—'}</td>
+          <td style="font-size:.78rem;color:var(--gray-400)">${fmtDate(u.created_at)}</td>
+          <td>${prodsHtml}</td>
+        </tr>`;
+      }).join('');
   document.getElementById('usuarios-table').style.display='block';
 }
  
