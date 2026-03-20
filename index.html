@@ -709,6 +709,36 @@ svg{display:inline-block;vertical-align:middle}
         <div class="form-group"><label>Apellido</label><input id="register-apellido" type="text" placeholder="González"></div>
       </div>
       <div class="form-group"><label>Correo electrónico</label><input id="register-email" type="email" placeholder="tu@correo.com"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Teléfono</label><input id="register-telefono" type="tel" placeholder="+58 412 0000000"></div>
+        <div class="form-group"><label>País</label>
+          <select id="register-pais" style="width:100%;padding:.7rem .9rem;border:1.5px solid var(--blue-200);border-radius:10px;background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;font-size:.88rem;color:var(--gray-900);outline:none">
+            <option value="">— Selecciona —</option>
+            <option value="Venezuela">Venezuela</option>
+            <option value="Colombia">Colombia</option>
+            <option value="México">México</option>
+            <option value="Argentina">Argentina</option>
+            <option value="Chile">Chile</option>
+            <option value="Perú">Perú</option>
+            <option value="Ecuador">Ecuador</option>
+            <option value="Bolivia">Bolivia</option>
+            <option value="Uruguay">Uruguay</option>
+            <option value="Paraguay">Paraguay</option>
+            <option value="Panama">Panamá</option>
+            <option value="Costa Rica">Costa Rica</option>
+            <option value="Guatemala">Guatemala</option>
+            <option value="Honduras">Honduras</option>
+            <option value="El Salvador">El Salvador</option>
+            <option value="Nicaragua">Nicaragua</option>
+            <option value="República Dominicana">República Dominicana</option>
+            <option value="Cuba">Cuba</option>
+            <option value="Puerto Rico">Puerto Rico</option>
+            <option value="Estados Unidos">Estados Unidos</option>
+            <option value="España">España</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+      </div>
       <div class="form-group"><label>Contraseña</label><input id="register-password" type="password" placeholder="Mínimo 8 caracteres"></div>
       <button class="btn-primary" id="register-btn" style="width:100%;justify-content:center" onclick="handleRegister()">Crear mi cuenta</button>
     </div>
@@ -837,9 +867,9 @@ let metodoSeleccionado = '';
 const instruccionesPago = {
   
   binance:    '🟡 <strong>Binance Pay:</strong> ID de Binance: <strong>123456789</strong>. Guarda el ID de transacción.',
-  pago_movil: '📱 <strong>Pago Móvil:</strong> Banco Venezuela · Cédula <strong>V-23.577.2958</strong> · Teléfono <strong>0426-6523166</strong>.',
+  pago_movil: '📱 <strong>Pago Móvil:</strong> Banco Venezuela · Cédula <strong>V-23.577.295</strong> · Teléfono <strong>0426-6523166</strong>.',
   davivienda: '🏦 <strong>Davivienda:</strong> Cuenta ahorros <strong>0033-0000-0000-0000</strong> — Andrea V.',
-  bancolombia:'🏦 <strong>Bancolombia:</strong> Cuenta ahorros <strong>726-91715141</strong> — Pastor A. · CC <strong>1.140.422.248</strong>.',
+  bancolombia:'🏦 <strong>Bancolombia:</strong> Cuenta ahorros <strong>200-000000-00</strong> — Andrea V.',
 };
 // Zinli no necesita referencia (es por correo), los demás sí
 const metodosConReferencia = ['binance','pago_movil','davivienda','bancolombia'];
@@ -1168,14 +1198,16 @@ async function handleRegister(){
   const apellido = document.getElementById('register-apellido').value.trim();
   const email    = document.getElementById('register-email').value.trim();
   const password = document.getElementById('register-password').value;
+  const telefono = document.getElementById('register-telefono').value.trim();
+  const pais     = document.getElementById('register-pais').value;
   showError('register-error','');
   showSuccess('register-success','');
-  if(!nombre || !email || !password){ showError('register-error','Completa todos los campos obligatorios.'); return; }
+  if(!nombre || !email || !password){ showError('register-error','Completa los campos obligatorios.'); return; }
   if(password.length < 8){ showError('register-error','La contraseña debe tener al menos 8 caracteres.'); return; }
   setLoading('register-btn', true, 'Crear mi cuenta');
   const { data, error } = await sb.auth.signUp({
     email, password,
-    options: { data: { nombre, apellido, nombre_completo: `${nombre} ${apellido}`.trim() } }
+    options: { data: { nombre, apellido, nombre_completo: `${nombre} ${apellido}`.trim(), telefono, pais } }
   });
   setLoading('register-btn', false, 'Crear mi cuenta');
   if(error){
@@ -1186,6 +1218,8 @@ async function handleRegister(){
   showSuccess('register-success', `¡Listo, ${nombre}! Revisa tu correo para confirmar tu cuenta. Luego podrás iniciar sesión.`);
   document.getElementById('register-email').value = '';
   document.getElementById('register-password').value = '';
+  document.getElementById('register-telefono').value = '';
+  document.getElementById('register-pais').value = '';
 }
  
 // ── OLVIDÉ CONTRASEÑA ──
