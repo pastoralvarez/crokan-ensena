@@ -23,7 +23,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--gray-900);min-height:100vh;-webkit-font-smoothing:antialiased}
-
+ 
 /* TOPBAR */
 .topbar{background:rgba(255,255,255,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--blue-100);height:64px;display:flex;align-items:center;padding:0 clamp(1rem,4vw,2rem);gap:1rem;position:sticky;top:0;z-index:100}
 .logo{display:flex;align-items:center;gap:.6rem;text-decoration:none;flex-shrink:0}
@@ -38,10 +38,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .btn-logout:hover{background:var(--gray-100);color:var(--gray-700)}
 .back-link{display:flex;align-items:center;gap:.4rem;font-size:.82rem;color:var(--gray-500);text-decoration:none;transition:color .2s}
 .back-link:hover{color:var(--blue-600)}
-
+ 
 /* LAYOUT */
 .shell{max-width:1100px;margin:0 auto;padding:2rem clamp(1rem,4vw,2rem) 4rem;display:grid;grid-template-columns:260px 1fr;gap:1.5rem;align-items:start}
-
+ 
 /* SIDEBAR */
 .sidebar{background:var(--white);border-radius:var(--radius);border:1px solid var(--blue-100);box-shadow:var(--shadow);padding:1.25rem;position:sticky;top:80px}
 .sidebar-user{text-align:center;padding:1rem 0 1.25rem;border-bottom:1px solid var(--blue-100);margin-bottom:1rem}
@@ -55,14 +55,14 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .sidebar-nav a:hover,.sidebar-nav a.active{background:var(--blue-50);color:var(--blue-600);font-weight:600}
 .sidebar-nav a.active{background:var(--blue-50)}
 .nav-icon{font-size:1rem;width:20px;text-align:center}
-
+ 
 /* MAIN */
 .main{display:flex;flex-direction:column;gap:1.25rem}
-
+ 
 /* CARDS */
 .card{background:var(--white);border-radius:var(--radius);border:1px solid var(--blue-100);box-shadow:var(--shadow);padding:1.5rem}
 .card-title{font-size:1rem;font-weight:700;color:var(--gray-900);margin-bottom:1.2rem;display:flex;align-items:center;gap:.5rem}
-
+ 
 /* KPI MINI */
 .kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.25rem}
 .kpi-mini{background:var(--bg);border-radius:12px;padding:1rem;border:1px solid var(--blue-100);text-align:center}
@@ -71,7 +71,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .kpi-mini.pink .n{color:var(--pink-500)}
 .kpi-mini.green .n{color:var(--green-600)}
 .kpi-mini .l{font-size:.68rem;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-top:.2rem}
-
+ 
 /* PRODUCTO CARD */
 .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
 .product-card{background:var(--white);border-radius:var(--radius);border:1.5px solid var(--blue-100);overflow:hidden;transition:all .3s;cursor:pointer}
@@ -97,13 +97,13 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .btn-open:hover{background:var(--blue-700);transform:translateY(-1px)}
 .btn-tool{background:var(--pink-500)}
 .btn-tool:hover{background:var(--pink-600)}
-
+ 
 /* EMPTY */
 .empty-state{text-align:center;padding:3rem 1rem;color:var(--gray-400)}
 .empty-icon{font-size:3.5rem;margin-bottom:.75rem;opacity:.5}
 .empty-title{font-size:1rem;font-weight:600;color:var(--gray-700);margin-bottom:.4rem}
 .empty-desc{font-size:.85rem;line-height:1.6;margin-bottom:1.25rem}
-
+ 
 /* PEDIDOS */
 .pedido-item{display:flex;align-items:flex-start;gap:1rem;padding:1rem;background:var(--bg);border-radius:10px;border:1px solid var(--blue-100);margin-bottom:.75rem;transition:all .2s}
 .pedido-item:last-child{margin-bottom:0}
@@ -117,7 +117,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .estado-confirmado{background:var(--green-100);color:var(--green-600)}
 .estado-pendiente{background:var(--amber-100);color:var(--amber-600)}
 .estado-cancelado{background:#FEECEC;color:#C0392B}
-
+ 
 /* FORM */
 .form-group{margin-bottom:1rem}
 .form-group label{display:block;font-size:.75rem;font-weight:700;color:var(--gray-700);margin-bottom:.4rem;letter-spacing:.03em}
@@ -126,24 +126,24 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 .btn-save{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--blue-600),var(--blue-500));color:white;padding:.7rem 1.5rem;border-radius:10px;font-size:.88rem;font-weight:600;border:none;cursor:pointer;transition:all .25s;box-shadow:0 4px 16px rgba(37,99,235,.25)}
 .btn-save:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,99,235,.3)}
-
+ 
 /* COMPROBANTE UPLOAD */
 .upload-zone{border:2px dashed var(--blue-300);border-radius:12px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .3s;background:var(--blue-50)}
 .upload-zone:hover{border-color:var(--blue-500);background:var(--blue-100)}
 .upload-zone p{font-size:.82rem;color:var(--gray-500)}
 .upload-zone strong{color:var(--blue-600)}
-
+ 
 /* NOTIFICACION */
 .notif{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--gray-900);color:white;padding:.85rem 1.25rem;border-radius:14px;font-size:.84rem;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:999;opacity:0;transform:translateY(12px);transition:all .3s;max-width:300px;line-height:1.5}
 .notif.show{opacity:1;transform:translateY(0)}
 .notif.success{background:#16a34a}
 .notif.error{background:#dc2626}
-
+ 
 /* LOADING */
 .loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem;gap:.75rem}
 .spinner{width:32px;height:32px;border:3px solid var(--blue-100);border-top-color:var(--blue-500);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-
+ 
 /* GATE (no session) */
 .gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
 .gate-card{background:white;border-radius:20px;padding:2.5rem;max-width:420px;width:100%;text-align:center;box-shadow:var(--shadow-md);border:1px solid var(--blue-100)}
@@ -152,7 +152,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .gate-desc{font-size:.9rem;color:var(--gray-500);line-height:1.7;margin-bottom:1.5rem}
 .btn-primary{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,var(--blue-600),var(--blue-500));color:white;padding:.75rem 1.5rem;border-radius:12px;font-size:.9rem;font-weight:600;text-decoration:none;border:none;cursor:pointer;transition:all .25s;box-shadow:0 4px 16px rgba(37,99,235,.3)}
 .btn-primary:hover{transform:translateY(-2px)}
-
+ 
 /* RESPONSIVE */
 @media(max-width:768px){
   .shell{grid-template-columns:1fr}
@@ -171,7 +171,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 </style>
 </head>
 <body>
-
+ 
 <!-- GATE: se muestra si no hay sesión -->
 <div id="gate" style="display:none">
   <div class="gate">
@@ -186,10 +186,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     </div>
   </div>
 </div>
-
+ 
 <!-- APP: se muestra con sesión -->
 <div id="app" style="display:none">
-
+ 
   <div class="topbar">
     <a href="crokan-frontend.html" class="back-link">
       <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -206,9 +206,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     </div>
     <button class="btn-logout" onclick="handleLogout()">Salir</button>
   </div>
-
+ 
   <div class="shell">
-
+ 
     <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="sidebar-user">
@@ -232,10 +232,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         </a></li>
       </ul>
     </aside>
-
+ 
     <!-- MAIN -->
     <main class="main">
-
+ 
       <!-- ── BIBLIOTECA ── -->
       <div id="section-biblioteca">
         <div class="kpi-row">
@@ -243,7 +243,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <div class="kpi-mini pink"><div class="n" id="kpi-herramientas">0</div><div class="l">Herramientas</div></div>
           <div class="kpi-mini green"><div class="n" id="kpi-total">0</div><div class="l">Total accesos</div></div>
         </div>
-
+ 
         <div class="card">
           <div class="card-title">
             <span>📚</span> Mi biblioteca
@@ -265,7 +265,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           </div>
         </div>
       </div>
-
+ 
       <!-- ── PEDIDOS ── -->
       <div id="section-pedidos" style="display:none">
         <div class="card">
@@ -282,7 +282,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           </div>
         </div>
       </div>
-
+ 
       <!-- ── NUEVO PEDIDO ── -->
       <div id="section-nuevo-pedido" style="display:none">
         <div class="card">
@@ -290,14 +290,14 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           <p style="font-size:.85rem;color:var(--gray-500);margin-bottom:1.25rem;line-height:1.6">
             Selecciona los productos que deseas adquirir, elige tu método de pago y sube el comprobante. Una vez que confirmemos el pago, activaremos tu acceso en menos de 24 horas.
           </p>
-
+ 
           <!-- Productos disponibles -->
           <div style="font-size:.75rem;font-weight:700;color:var(--gray-700);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem">Productos disponibles</div>
           <div id="productos-disponibles-loading" class="loading-wrap" style="padding:1.5rem">
             <div class="spinner"></div>
           </div>
           <div id="productos-disponibles" style="display:none;margin-bottom:1.5rem"></div>
-
+ 
           <div class="form-group">
             <label>Método de pago</label>
             <select class="form-input" id="pedido-metodo">
@@ -309,14 +309,14 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
               <option value="bancolombia">Bancolombia</option>
             </select>
           </div>
-
+ 
           <div id="instrucciones-pago" style="display:none;background:var(--blue-50);border:1px solid var(--blue-200);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1rem;font-size:.83rem;color:var(--blue-700);line-height:1.7"></div>
-
+ 
           <div class="form-group">
             <label>Notas adicionales (opcional)</label>
             <textarea class="form-input" id="pedido-notas" rows="2" placeholder="Ej: referencia del pago, número de confirmación..."></textarea>
           </div>
-
+ 
           <div class="upload-zone" onclick="document.getElementById('comprobante-input').click()">
             <div style="font-size:2rem;margin-bottom:.4rem">📎</div>
             <p><strong>Adjunta tu comprobante de pago</strong></p>
@@ -324,14 +324,14 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
             <div id="comprobante-name" style="margin-top:.5rem;font-size:.78rem;color:var(--blue-600);font-weight:600"></div>
           </div>
           <input type="file" id="comprobante-input" accept="image/*,.pdf" style="display:none" onchange="handleComprobanteSelect(this)">
-
+ 
           <button class="btn-save" style="margin-top:1rem;width:100%;justify-content:center" onclick="enviarPedido()">
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             Enviar pedido
           </button>
         </div>
       </div>
-
+ 
       <!-- ── PERFIL ── -->
       <div id="section-perfil" style="display:none">
         <div class="card">
@@ -346,6 +346,34 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
               <input class="form-input" id="perfil-apellido" type="text" placeholder="González">
             </div>
           </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Teléfono</label>
+              <input class="form-input" id="perfil-telefono" type="tel" placeholder="+58 412 0000000">
+            </div>
+            <div class="form-group">
+              <label>País</label>
+              <select class="form-input" id="perfil-pais">
+                <option value="">— Selecciona —</option>
+                <option value="Venezuela">Venezuela</option>
+                <option value="Colombia">Colombia</option>
+                <option value="México">México</option>
+                <option value="Argentina">Argentina</option>
+                <option value="Chile">Chile</option>
+                <option value="Perú">Perú</option>
+                <option value="Ecuador">Ecuador</option>
+                <option value="Bolivia">Bolivia</option>
+                <option value="Uruguay">Uruguay</option>
+                <option value="Paraguay">Paraguay</option>
+                <option value="Panama">Panamá</option>
+                <option value="Costa Rica">Costa Rica</option>
+                <option value="Guatemala">Guatemala</option>
+                <option value="Estados Unidos">Estados Unidos</option>
+                <option value="España">España</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+          </div>
           <div class="form-group">
             <label>Correo electrónico</label>
             <input class="form-input" id="perfil-email" type="email" disabled style="opacity:.6;cursor:not-allowed">
@@ -356,7 +384,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
             Guardar cambios
           </button>
         </div>
-
+ 
         <div class="card">
           <div class="card-title"><span>🔑</span> Cambiar contraseña</div>
           <div class="form-group">
@@ -372,24 +400,24 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
           </button>
         </div>
       </div>
-
+ 
     </main>
   </div>
 </div>
-
+ 
 <div class="notif" id="notif"></div>
-
+ 
 <!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL = 'https://gjtucszugkbyuxemtmxj.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_pF3-mN98CnjTPvzHXXLANQ_2VHWX2vm';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+ 
 let currentUser = null;
 let selectedProducts = [];
 let comprobanteFile = null;
-
+ 
 // ── NOTIFICACIÓN ──
 function notif(msg, type=''){
   const el = document.getElementById('notif');
@@ -397,7 +425,7 @@ function notif(msg, type=''){
   el.className = 'notif show' + (type ? ' '+type : '');
   setTimeout(()=>el.classList.remove('show'), 3500);
 }
-
+ 
 // ── NAVEGACIÓN ──
 function showSection(name){
   ['biblioteca','pedidos','nuevo-pedido','perfil'].forEach(s=>{
@@ -408,38 +436,38 @@ function showSection(name){
   if(name==='pedidos') loadPedidos();
   if(name==='nuevo-pedido') loadProductosDisponibles();
 }
-
+ 
 // ── LOGOUT ──
 async function handleLogout(){
   await sb.auth.signOut();
   window.location.href = 'crokan-frontend.html';
 }
-
+ 
 // ── CARGAR BIBLIOTECA ──
 async function loadBiblioteca(){
   document.getElementById('biblioteca-loading').style.display='flex';
   document.getElementById('biblioteca-content').style.display='none';
   document.getElementById('biblioteca-empty').style.display='none';
-
+ 
   const { data, error } = await sb
     .from('accesos')
     .select('*, producto:productos(*)')
     .eq('user_id', currentUser.id)
     .eq('activo', true);
-
+ 
   document.getElementById('biblioteca-loading').style.display='none';
-
+ 
   if(error || !data || !data.length){
     document.getElementById('biblioteca-empty').style.display='block';
     return;
   }
-
+ 
   const cursos = data.filter(a=>a.producto?.tipo==='curso');
   const herramientas = data.filter(a=>a.producto?.tipo==='herramienta');
   document.getElementById('kpi-cursos').textContent = cursos.length;
   document.getElementById('kpi-herramientas').textContent = herramientas.length;
   document.getElementById('kpi-total').textContent = data.length;
-
+ 
   const thumbColors = ['product-thumb-c1','product-thumb-c2','product-thumb-c3','product-thumb-c4','product-thumb-c5','product-thumb-c6'];
   const grid = document.getElementById('product-grid');
   grid.innerHTML = data.map((acceso, i) => {
@@ -464,48 +492,48 @@ async function loadBiblioteca(){
         </div>
       </div>`;
   }).join('');
-
+ 
   document.getElementById('biblioteca-content').style.display='block';
 }
-
+ 
 function abrirHerramienta(){
   window.open('crokan-herramienta.html','_blank');
 }
-
+ 
 function abrirCurso(id, nombre){
   notif('Abriendo: ' + nombre + ' 🎬');
 }
-
+ 
 // ── CARGAR PEDIDOS ──
 async function loadPedidos(){
   document.getElementById('pedidos-loading').style.display='flex';
   document.getElementById('pedidos-content').style.display='none';
   document.getElementById('pedidos-empty').style.display='none';
-
+ 
   const { data, error } = await sb
     .from('pedidos')
     .select('*, pedido_items(*, producto:productos(nombre,icono))')
     .eq('user_id', currentUser.id)
     .order('created_at', { ascending: false });
-
+ 
   document.getElementById('pedidos-loading').style.display='none';
-
+ 
   if(error || !data || !data.length){
     document.getElementById('pedidos-empty').style.display='block';
     return;
   }
-
+ 
   const estadoBadge = e => ({
     confirmado: '<span class="estado-badge estado-confirmado">✓ Confirmado</span>',
     pendiente:  '<span class="estado-badge estado-pendiente">⏳ Pendiente</span>',
     cancelado:  '<span class="estado-badge estado-cancelado">✕ Cancelado</span>',
   }[e] || e);
-
+ 
   const metodoLabel = m => ({
     zinli:'Zinli', binance:'Binance Pay', pago_movil:'Pago Móvil',
     davivienda:'Davivienda', bancolombia:'Bancolombia'
   }[m] || m);
-
+ 
   document.getElementById('pedidos-content').innerHTML = data.map(p => {
     const prods = p.pedido_items?.map(i=>`${i.producto?.icono||'📦'} ${i.producto?.nombre||'Producto'}`).join(' · ') || '—';
     const fecha = new Date(p.created_at).toLocaleDateString('es-VE',{day:'2-digit',month:'short',year:'numeric'});
@@ -523,20 +551,20 @@ async function loadPedidos(){
       <div class="pedido-total">$${parseFloat(p.total).toFixed(2)}</div>
     </div>`;
   }).join('');
-
+ 
   document.getElementById('pedidos-content').style.display='block';
 }
-
+ 
 // ── CARGAR PRODUCTOS DISPONIBLES ──
 async function loadProductosDisponibles(){
   document.getElementById('productos-disponibles-loading').style.display='flex';
   document.getElementById('productos-disponibles').style.display='none';
   selectedProducts = [];
-
+ 
   const { data } = await sb.from('productos').select('*').eq('activo', true).order('precio');
   document.getElementById('productos-disponibles-loading').style.display='none';
   if(!data) return;
-
+ 
   document.getElementById('productos-disponibles').innerHTML = data.map(p=>`
     <div id="prod-${p.id}" onclick="toggleProduct('${p.id}','${p.nombre.replace(/'/g,"\\'")}',${p.precio})"
       style="display:flex;align-items:center;gap:.85rem;padding:.85rem 1rem;border-radius:10px;border:1.5px solid var(--blue-100);margin-bottom:.5rem;cursor:pointer;transition:all .2s;background:var(--bg)">
@@ -548,10 +576,10 @@ async function loadProductosDisponibles(){
       <div style="font-family:'Fraunces',serif;font-size:1rem;font-weight:600;color:var(--blue-600)">$${p.precio}</div>
       <div id="check-${p.id}" style="width:20px;height:20px;border-radius:50%;border:2px solid var(--blue-300);display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0"></div>
     </div>`).join('');
-
+ 
   document.getElementById('productos-disponibles').style.display='block';
 }
-
+ 
 function toggleProduct(id, nombre, precio){
   const idx = selectedProducts.findIndex(p=>p.id===id);
   const el = document.getElementById('prod-'+id);
@@ -574,7 +602,7 @@ function toggleProduct(id, nombre, precio){
   }
   actualizarTotalPedido();
 }
-
+ 
 function actualizarTotalPedido(){
   const total = selectedProducts.reduce((s,p)=>s+p.precio,0);
   let totalEl = document.getElementById('pedido-total-display');
@@ -586,7 +614,7 @@ function actualizarTotalPedido(){
   }
   totalEl.textContent = selectedProducts.length ? `Total: $${total.toFixed(2)} USD` : '';
 }
-
+ 
 // ── INSTRUCCIONES DE PAGO ──
 document.addEventListener('DOMContentLoaded', ()=>{
   const sel = document.getElementById('pedido-metodo');
@@ -607,23 +635,23 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
   });
 });
-
+ 
 function handleComprobanteSelect(input){
   comprobanteFile = input.files[0];
   if(comprobanteFile){
     document.getElementById('comprobante-name').textContent = '📎 ' + comprobanteFile.name;
   }
 }
-
+ 
 // ── ENVIAR PEDIDO ──
 async function enviarPedido(){
   if(!selectedProducts.length){ notif('Selecciona al menos un producto.','error'); return; }
   const metodo = document.getElementById('pedido-metodo').value;
   if(!metodo){ notif('Selecciona un método de pago.','error'); return; }
-
+ 
   const total = selectedProducts.reduce((s,p)=>s+p.precio,0);
   const notas = document.getElementById('pedido-notas').value;
-
+ 
   let comprobante_url = null;
   if(comprobanteFile){
     const ext = comprobanteFile.name.split('.').pop();
@@ -636,7 +664,7 @@ async function enviarPedido(){
       comprobante_url = urlData?.publicUrl || null;
     }
   }
-
+ 
   const { data: pedido, error } = await sb.from('pedidos').insert([{
     user_id: currentUser.id,
     total,
@@ -645,16 +673,16 @@ async function enviarPedido(){
     comprobante_url,
     notas
   }]).select().single();
-
+ 
   if(error){ notif('Error al enviar el pedido. Intenta de nuevo.','error'); return; }
-
+ 
   const items = selectedProducts.map(p=>({
     pedido_id: pedido.id,
     producto_id: p.id,
     precio: p.precio
   }));
   await sb.from('pedido_items').insert(items);
-
+ 
   notif('¡Pedido enviado! Te avisamos cuando confirmemos el pago. 🎉','success');
   selectedProducts = [];
   comprobanteFile = null;
@@ -665,21 +693,23 @@ async function enviarPedido(){
   loadProductosDisponibles();
   setTimeout(()=>showSection('pedidos'), 2000);
 }
-
+ 
 // ── GUARDAR PERFIL ──
 async function guardarPerfil(){
   const nombre   = document.getElementById('perfil-nombre').value.trim();
   const apellido = document.getElementById('perfil-apellido').value.trim();
+  const telefono = document.getElementById('perfil-telefono').value.trim();
+  const pais     = document.getElementById('perfil-pais').value;
   if(!nombre){ notif('Escribe tu nombre.','error'); return; }
   const { error } = await sb.auth.updateUser({
-    data: { nombre, apellido, nombre_completo: `${nombre} ${apellido}`.trim() }
+    data: { nombre, apellido, nombre_completo: `${nombre} ${apellido}`.trim(), telefono, pais }
   });
   if(error){ notif('Error al guardar. Intenta de nuevo.','error'); return; }
   notif('Perfil actualizado correctamente ✓','success');
   document.getElementById('sidebar-name').textContent = `${nombre} ${apellido}`.trim();
   document.getElementById('user-initials').textContent = nombre.charAt(0).toUpperCase();
 }
-
+ 
 // ── CAMBIAR PASSWORD ──
 async function cambiarPassword(){
   const nueva    = document.getElementById('nueva-password').value;
@@ -692,7 +722,7 @@ async function cambiarPassword(){
   document.getElementById('nueva-password').value = '';
   document.getElementById('confirmar-password').value = '';
 }
-
+ 
 // ── INIT ──
 async function init(){
   const { data: { session } } = await sb.auth.getSession();
@@ -702,24 +732,27 @@ async function init(){
   }
   currentUser = session.user;
   document.getElementById('app').style.display = 'block';
-
+ 
   const meta = currentUser.user_metadata || {};
   const nombre   = meta.nombre   || currentUser.email.split('@')[0];
   const apellido = meta.apellido || '';
   const nombreCompleto = `${nombre} ${apellido}`.trim();
-
+ 
   document.getElementById('user-displayname').textContent = nombre;
   document.getElementById('user-initials').textContent    = nombre.charAt(0).toUpperCase();
   document.getElementById('sidebar-name').textContent     = nombreCompleto;
   document.getElementById('sidebar-email').textContent    = currentUser.email;
   document.getElementById('perfil-nombre').value          = nombre;
   document.getElementById('perfil-apellido').value        = apellido;
+  document.getElementById('perfil-telefono').value        = meta.telefono || '';
+  document.getElementById('perfil-pais').value            = meta.pais || '';
   document.getElementById('perfil-email').value           = currentUser.email;
-
+ 
   loadBiblioteca();
 }
-
+ 
 init();
 </script>
 </body>
 </html>
+ 
