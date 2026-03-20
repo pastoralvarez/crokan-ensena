@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM — Crokan enseña by Andrea V.</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,400;0,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f8ff;--white:#fff;
+  --blue-50:#eff6ff;--blue-100:#dbeafe;--blue-200:#bfdbfe;
+  --blue-400:#60a5fa;--blue-500:#3b82f6;--blue-600:#2563eb;--blue-700:#1d4ed8;
+  --pink-50:#fdf2f8;--pink-100:#fce7f3;--pink-200:#fbcfe8;
+  --pink-400:#f472b6;--pink-500:#ec4899;--pink-600:#db2777;
+  --gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-200:#e2e8f0;
+  --gray-400:#94a3b8;--gray-500:#64748b;--gray-700:#334155;--gray-900:#0f172a;
+  --green-100:#dcfce7;--green-500:#22c55e;--green-600:#16a34a;--green-700:#15803d;
+  --amber-100:#fef3c7;--amber-500:#f59e0b;--amber-600:#d97706;
+  --red-50:#fef2f2;--red-100:#fee2e2;--red-500:#ef4444;--red-600:#dc2626;
+  --shadow:0 2px 16px rgba(59,130,246,0.08);
+  --shadow-md:0 4px 24px rgba(59,130,246,0.13);
+  --r:12px;--r-lg:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--gray-900);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ── GATE ── */
+#gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:linear-gradient(160deg,var(--white) 0%,var(--blue-50) 50%,var(--pink-50) 100%)}
+.gate-card{background:white;border-radius:22px;padding:2.5rem 2rem;max-width:400px;width:100%;text-align:center;box-shadow:var(--shadow-md);border:1px solid var(--blue-100)}
+.gate-logo{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--blue-500),var(--pink-500));display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 1rem;box-shadow:0 4px 14px rgba(37,99,235,.3)}
+.gate-title{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:600;color:var(--gray-900);margin-bottom:.3rem}
+.gate-sub{font-size:.83rem;color:var(--gray-400);margin-bottom:1.5rem;line-height:1.6}
+.gate-error{background:#fef2f2;border:1px solid var(--red-100);border-radius:9px;padding:.65rem .9rem;font-size:.8rem;color:var(--red-600);margin-bottom:.9rem;display:none;text-align:left}
+.fg{margin-bottom:.9rem;text-align:left}
+.fg label{display:block;font-size:.72rem;font-weight:700;color:var(--gray-700);margin-bottom:.35rem;letter-spacing:.03em}
+.fg input{width:100%;padding:.7rem .9rem;border:1.5px solid var(--blue-200);border-radius:10px;background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;font-size:.88rem;color:var(--gray-900);outline:none;transition:border .2s}
+.fg input:focus{border-color:var(--blue-500);background:white}
+.btn-gate{width:100%;padding:.8rem;border-radius:11px;background:linear-gradient(135deg,var(--blue-600),var(--blue-500));color:white;font-size:.9rem;font-weight:700;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .2s;box-shadow:0 4px 14px rgba(37,99,235,.3)}
+.btn-gate:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,99,235,.4)}
+.btn-gate:disabled{opacity:.6;transform:none;cursor:not-allowed}
+
+/* ── APP SHELL ── */
+#crm-app{display:none;min-height:100vh;flex-direction:column}
+
+/* ── NAVBAR ── */
+.navbar{background:linear-gradient(135deg,var(--blue-700),var(--blue-600),var(--pink-500));height:62px;display:flex;align-items:center;padding:0 1.5rem;gap:1rem;position:sticky;top:0;z-index:200;box-shadow:0 4px 20px rgba(37,99,235,.25)}
+.nav-logo{display:flex;align-items:center;gap:.6rem;text-decoration:none;flex-shrink:0}
+.nav-logo-icon{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:15px;border:1px solid rgba(255,255,255,.3)}
+.nav-logo-name{font-family:'Fraunces',serif;font-size:.95rem;font-weight:600;color:white;line-height:1}
+.nav-logo-name span{color:rgba(255,255,255,.7);font-size:.75rem;font-weight:400;display:block}
+.nav-crm-badge{background:rgba(255,255,255,.2);color:white;font-size:.65rem;font-weight:700;padding:3px 10px;border-radius:100px;letter-spacing:.06em;border:1px solid rgba(255,255,255,.25)}
+.nav-spacer{flex:1}
+.nav-user{display:flex;align-items:center;gap:.6rem}
+.nav-avatar{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.25);border:2px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-size:.78rem;color:white;font-weight:700}
+.nav-name{font-size:.82rem;font-weight:600;color:rgba(255,255,255,.9)}
+.btn-nav-logout{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:.35rem .85rem;font-size:.75rem;color:white;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .2s}
+.btn-nav-logout:hover{background:rgba(255,255,255,.25)}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:4px;flex-direction:column;gap:4px}
+.hamburger span{display:block;width:20px;height:2px;background:white;border-radius:2px;transition:all .3s}
+
+/* ── MOBILE BOTTOM NAV ── */
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--blue-100);padding:6px 0 10px;z-index:150;justify-content:space-around;box-shadow:0 -4px 20px rgba(59,130,246,.1)}
+.mnav-item{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px 8px;border-radius:10px;transition:.2s;background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif;min-width:52px}
+.mnav-item.active .mnav-icon{background:linear-gradient(135deg,var(--blue-600),var(--pink-500));color:white}
+.mnav-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;transition:.2s;background:var(--gray-100)}
+.mnav-label{font-size:9px;color:var(--gray-400);font-weight:500}
+.mnav-item.active .mnav-label{color:var(--blue-600);font-weight:700}
+.mnav-badge{position:absolute;top:-2px;right:-2px;background:var(--pink-500);color:white;font-size:.55rem;font-weight:800;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1.5px solid white}
+
+/* ── BODY LAYOUT ── */
+.app-body{display:flex;flex:1;min-height:calc(100vh - 62px)}
+
+/* ── SIDEBAR ── */
+.sidebar{width:220px;flex-shrink:0;background:white;border-right:1px solid var(--blue-100);padding:1.25rem .75rem;display:flex;flex-direction:column;gap:.15rem;position:sticky;top:62px;height:calc(100vh - 62px);overflow-y:auto}
+.sidebar-section{font-size:.63rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.1em;padding:.6rem .6rem .25rem;margin-top:.4rem}
+.nav-item{display:flex;align-items:center;gap:.65rem;padding:.6rem .75rem;border-radius:10px;font-size:.82rem;font-weight:500;color:var(--gray-500);cursor:pointer;transition:all .2s;user-select:none;position:relative}
+.nav-item:hover{background:var(--blue-50);color:var(--blue-600)}
+.nav-item.active{background:linear-gradient(135deg,var(--blue-50),var(--pink-50));color:var(--blue-600);font-weight:700;border:1px solid var(--blue-100)}
+.nav-icon{font-size:.95rem;width:20px;text-align:center}
+.nav-pill{margin-left:auto;background:var(--pink-500);color:white;font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:100px;min-width:18px;text-align:center}
+
+/* ── MAIN ── */
+.main{flex:1;padding:1.75rem;overflow-y:auto;max-width:100%}
+.page{display:none;flex-direction:column;gap:1.25rem}
+.page.active{display:flex}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:.25rem}
+.page-title{font-family:'Fraunces',serif;font-size:1.35rem;font-weight:600;color:var(--gray-900)}
+.page-sub{font-size:.8rem;color:var(--gray-400);margin-top:2px}
+
+/* ── KPI ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.kpi{background:white;border-radius:var(--r-lg);border:1px solid var(--blue-100);box-shadow:var(--shadow);padding:1.1rem 1.2rem;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi.blue::before{background:linear-gradient(90deg,var(--blue-400),var(--blue-600))}
+.kpi.green::before{background:linear-gradient(90deg,#34d399,var(--green-600))}
+.kpi.amber::before{background:linear-gradient(90deg,#fcd34d,var(--amber-600))}
+.kpi.pink::before{background:linear-gradient(90deg,var(--pink-400),var(--pink-600))}
+.kpi-label{font-size:.68rem;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.35rem}
+.kpi-value{font-family:'Fraunces',serif;font-size:1.85rem;font-weight:600;line-height:1;margin-bottom:.2rem}
+.kpi.blue .kpi-value{color:var(--blue-600)}
+.kpi.green .kpi-value{color:var(--green-600)}
+.kpi.amber .kpi-value{color:var(--amber-600)}
+.kpi.pink .kpi-value{color:var(--pink-500)}
+.kpi-sub{font-size:.7rem;color:var(--gray-400)}
+
+/* ── CARD ── */
+.card{background:white;border-radius:var(--r-lg);border:1px solid var(--blue-100);box-shadow:var(--shadow);padding:1.25rem}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:.75rem;flex-wrap:wrap}
+.card-title{font-size:.88rem;font-weight:700;color:var(--gray-900);display:flex;align-items:center;gap:.45rem}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--gray-200)}
+table{width:100%;border-collapse:collapse;font-size:.81rem;min-width:500px}
+thead th{text-align:left;padding:.65rem 1rem;font-size:.67rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--gray-200);background:var(--gray-50);white-space:nowrap}
+tbody td{padding:.75rem 1rem;border-bottom:1px solid var(--gray-100);color:var(--gray-700);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--blue-50)}
+.td-name{font-weight:600;color:var(--gray-900)}
+.td-email{color:var(--gray-500);font-size:.79rem}
+.td-mono{font-size:.73rem;color:var(--gray-400);font-family:monospace}
+.td-actions{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:.25rem;font-size:.66rem;font-weight:700;padding:3px 9px;border-radius:100px;white-space:nowrap}
+.badge-green{background:var(--green-100);color:var(--green-700)}
+.badge-amber{background:var(--amber-100);color:var(--amber-600)}
+.badge-red{background:var(--red-100);color:var(--red-600)}
+.badge-blue{background:var(--blue-100);color:var(--blue-700)}
+.badge-pink{background:var(--pink-100);color:var(--pink-600)}
+.badge-gray{background:var(--gray-100);color:var(--gray-500)}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border-radius:9px;font-size:.78rem;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;border:none;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-primary{background:linear-gradient(135deg,var(--blue-600),var(--blue-500));color:white;box-shadow:0 3px 10px rgba(37,99,235,.25)}
+.btn-primary:hover{box-shadow:0 5px 16px rgba(37,99,235,.35)}
+.btn-pink{background:linear-gradient(135deg,var(--pink-600),var(--pink-500));color:white;box-shadow:0 3px 10px rgba(236,72,153,.25)}
+.btn-pink:hover{box-shadow:0 5px 16px rgba(236,72,153,.35)}
+.btn-success{background:var(--green-600);color:white}
+.btn-success:hover{background:var(--green-700)}
+.btn-danger{background:var(--red-500);color:white}
+.btn-danger:hover{background:var(--red-600)}
+.btn-ghost{background:var(--gray-100);color:var(--gray-700);border:1px solid var(--gray-200)}
+.btn-ghost:hover{background:var(--gray-200)}
+.btn-sm{padding:.35rem .75rem;font-size:.71rem}
+.btn-xs{padding:.25rem .55rem;font-size:.67rem}
+
+/* ── FORM ── */
+.fi{width:100%;padding:.65rem .85rem;border:1.5px solid var(--blue-200);border-radius:9px;background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;font-size:.84rem;color:var(--gray-900);outline:none;transition:border .2s}
+.fi:focus{border-color:var(--blue-500);background:white}
+.fi:disabled{opacity:.55;cursor:not-allowed}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:.72rem;font-weight:700;color:var(--gray-700);margin-bottom:.35rem;letter-spacing:.03em}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem}
+
+/* ── SEARCH BAR ── */
+.search-row{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center}
+.search-input{flex:1;min-width:180px;padding:.6rem .9rem;border:1.5px solid var(--blue-200);border-radius:9px;background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;outline:none;transition:border .2s}
+.search-input:focus{border-color:var(--blue-500);background:white}
+
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(5px);z-index:500;align-items:center;justify-content:center;padding:1rem}
+.modal-bg.open{display:flex}
+.modal{background:white;border-radius:20px;padding:1.75rem;width:100%;max-width:520px;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:modalIn .22s ease;max-height:92vh;overflow-y:auto}
+@keyframes modalIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+.modal-title{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:600;color:var(--gray-900)}
+.modal-close{background:var(--gray-100);border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:.88rem;color:var(--gray-500);display:flex;align-items:center;justify-content:center;transition:.2s}
+.modal-close:hover{background:var(--gray-200);color:var(--gray-900)}
+.modal-divider{height:1px;background:var(--gray-200);margin:1rem 0}
+.modal-actions{display:flex;gap:.75rem;margin-top:1.25rem}
+.modal-actions .btn{flex:1;justify-content:center}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:2.5rem 1rem;color:var(--gray-400)}
+.empty-icon{font-size:2.8rem;margin-bottom:.6rem;opacity:.5}
+.empty-title{font-size:.9rem;font-weight:600;color:var(--gray-600);margin-bottom:.3rem}
+.empty-desc{font-size:.8rem;line-height:1.6}
+
+/* ── SPINNER ── */
+.spinner{width:28px;height:28px;border:3px solid var(--blue-100);border-top-color:var(--blue-500);border-radius:50%;animation:spin .7s linear infinite;margin:2rem auto;display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── NOTIF ── */
+.notif{position:fixed;bottom:1.5rem;right:1.5rem;padding:.85rem 1.2rem;border-radius:12px;font-size:.83rem;font-weight:500;color:white;z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;max-width:320px;line-height:1.5;box-shadow:0 8px 24px rgba(0,0,0,.2);pointer-events:none}
+.notif.show{opacity:1;transform:translateY(0)}
+.notif.success{background:linear-gradient(135deg,var(--green-700),var(--green-600))}
+.notif.error{background:linear-gradient(135deg,#b91c1c,var(--red-600))}
+.notif.info{background:linear-gradient(135deg,var(--blue-700),var(--blue-600))}
+
+/* ── COMPROBANTE ── */
+.comprobante-img{max-width:100%;border-radius:10px;border:1px solid var(--gray-200);margin-top:.75rem;display:block}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .kpi-grid{grid-template-columns:1fr 1fr}
+  .sidebar{display:none}
+  .mobile-nav{display:flex}
+  .main{padding:1.25rem 1rem 80px}
+}
+@media(max-width:600px){
+  .kpi-grid{grid-template-columns:1fr 1fr}
+  .form-row,.form-row3{grid-template-columns:1fr}
+  .modal{padding:1.25rem;border-radius:16px}
+  .page-header{flex-direction:column;align-items:flex-start}
+  .hamburger{display:flex}
+}
+@media(max-width:380px){
+  .kpi-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- GATE -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-logo">🎂</div>
+    <div class="gate-title">Panel de administración</div>
+    <div class="gate-sub">Acceso exclusivo para Andrea V.<br>Solo administradoras autorizadas.</div>
+    <div id="gate-error" class="gate-error"></div>
+    <div class="fg"><label>Correo electrónico</label><input id="gate-email" type="email" placeholder="tu@correo.com" autocomplete="email"></div>
+    <div class="fg"><label>Contraseña</label><input id="gate-password" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')loginAdmin()"></div>
+    <button class="btn-gate" id="gate-btn" onclick="loginAdmin()">Entrar al CRM</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="crm-app" style="display:none;flex-direction:column;min-height:100vh">
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <div class="nav-logo-icon">🎂</div>
+      <div class="nav-logo-name">Crokan enseña <span>by Andrea V.</span></div>
+    </div>
+    <span class="nav-crm-badge">CRM Admin</span>
+    <div class="nav-spacer"></div>
+    <div class="nav-user">
+      <div class="nav-avatar" id="nav-initial">A</div>
+      <span class="nav-name" id="nav-name">Admin</span>
+    </div>
+    <button class="btn-nav-logout" onclick="logoutAdmin()">Salir</button>
+  </nav>
+
+  <div class="app-body">
+
+    <!-- SIDEBAR (desktop) -->
+    <aside class="sidebar">
+      <div class="sidebar-section">Principal</div>
+      <div class="nav-item active" onclick="goTo('dashboard')" id="nav-dashboard"><span class="nav-icon">📊</span>Dashboard</div>
+      <div class="nav-item" onclick="goTo('pedidos')" id="nav-pedidos"><span class="nav-icon">🧾</span>Pedidos<span class="nav-pill" id="pill-pendientes" style="display:none">0</span></div>
+      <div class="nav-item" onclick="goTo('accesos')" id="nav-accesos"><span class="nav-icon">🔑</span>Accesos</div>
+      <div class="nav-item" onclick="goTo('usuarios')" id="nav-usuarios"><span class="nav-icon">👥</span>Usuarias</div>
+      <div class="sidebar-section">Catálogo</div>
+      <div class="nav-item" onclick="goTo('productos')" id="nav-productos"><span class="nav-icon">📦</span>Productos</div>
+      <div class="sidebar-section">Marketing</div>
+      <div class="nav-item" onclick="goTo('waitlist')" id="nav-waitlist"><span class="nav-icon">📋</span>Lista de espera</div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- ══ DASHBOARD ══ -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div><div class="page-title">Dashboard</div><div class="page-sub">Resumen en tiempo real de tu escuela</div></div>
+          <button class="btn btn-ghost btn-sm" onclick="loadDashboard()">↻ Actualizar</button>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi blue"><div class="kpi-label">Accesos activos</div><div class="kpi-value" id="kpi-accesos">—</div><div class="kpi-sub">Productos habilitados</div></div>
+          <div class="kpi green"><div class="kpi-label">Ingresos confirmados</div><div class="kpi-value" id="kpi-ingresos">—</div><div class="kpi-sub">Total en USD</div></div>
+          <div class="kpi amber"><div class="kpi-label">Pedidos pendientes</div><div class="kpi-value" id="kpi-pendientes">—</div><div class="kpi-sub">Esperando confirmación</div></div>
+          <div class="kpi pink"><div class="kpi-label">Total pedidos</div><div class="kpi-value" id="kpi-total-pedidos">—</div><div class="kpi-sub">Todos los estados</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
+          <div class="card">
+            <div class="card-header"><div class="card-title">🧾 Últimos pedidos</div><button class="btn btn-ghost btn-sm" onclick="goTo('pedidos')">Ver todos →</button></div>
+            <div id="dash-pedidos-wrap"><span class="spinner"></span></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">📦 Productos del catálogo</div><button class="btn btn-ghost btn-sm" onclick="goTo('productos')">Gestionar →</button></div>
+            <div id="dash-productos-wrap"><span class="spinner"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PEDIDOS ══ -->
+      <div class="page" id="page-pedidos">
+        <div class="page-header">
+          <div><div class="page-title">Pedidos</div><div class="page-sub">Confirma pagos y activa accesos con un clic</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🧾 Todos los pedidos</div>
+            <div class="search-row">
+              <input class="search-input" placeholder="Buscar..." id="search-pedidos" oninput="filterPedidos()" style="max-width:200px">
+              <select class="fi" style="width:auto;padding:.58rem .85rem;font-size:.8rem" id="filter-estado" onchange="filterPedidos()">
+                <option value="">Todos</option>
+                <option value="pendiente">Pendientes</option>
+                <option value="confirmado">Confirmados</option>
+                <option value="cancelado">Cancelados</option>
+              </select>
+            </div>
+          </div>
+          <div id="pedidos-loading"><span class="spinner"></span></div>
+          <div id="pedidos-table" class="table-wrap" style="display:none">
+            <table><thead><tr><th>Usuario ID</th><th>Productos</th><th>Total</th><th>Método</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
+            <tbody id="pedidos-body"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ACCESOS ══ -->
+      <div class="page" id="page-accesos">
+        <div class="page-header">
+          <div><div class="page-title">Accesos</div><div class="page-sub">Controla qué usuaria tiene acceso a cada producto</div></div>
+          <button class="btn btn-primary" onclick="abrirModalAcceso()">+ Dar acceso manual</button>
+        </div>
+        <div class="card">
+          <div id="accesos-loading"><span class="spinner"></span></div>
+          <div id="accesos-table" class="table-wrap" style="display:none">
+            <table><thead><tr><th>Usuario ID</th><th>Producto</th><th>Estado</th><th>Otorgado</th><th>Acciones</th></tr></thead>
+            <tbody id="accesos-body"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ USUARIOS ══ -->
+      <div class="page" id="page-usuarios">
+        <div class="page-header">
+          <div><div class="page-title">Usuarias</div><div class="page-sub">Personas registradas en la plataforma</div></div>
+        </div>
+        <div class="card">
+          <div id="usuarios-loading"><span class="spinner"></span></div>
+          <div id="usuarios-table" class="table-wrap" style="display:none">
+            <table><thead><tr><th>Usuario ID</th><th>Fecha registro</th><th>Accesos activos</th><th>Acciones</th></tr></thead>
+            <tbody id="usuarios-body"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PRODUCTOS ══ -->
+      <div class="page" id="page-productos">
+        <div class="page-header">
+          <div><div class="page-title">Productos</div><div class="page-sub">Cursos, herramienta y combos del catálogo</div></div>
+          <button class="btn btn-primary" onclick="abrirModalProducto()">+ Nuevo producto</button>
+        </div>
+        <div class="card">
+          <div id="productos-loading"><span class="spinner"></span></div>
+          <div id="productos-table" class="table-wrap" style="display:none">
+            <table><thead><tr><th>Producto</th><th>Tipo</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody id="productos-body"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ WAITLIST ══ -->
+      <div class="page" id="page-waitlist">
+        <div class="page-header">
+          <div><div class="page-title">Lista de espera</div><div class="page-sub">Correos del banner del sitio web</div></div>
+          <button class="btn btn-ghost btn-sm" onclick="loadWaitlist()">↻ Actualizar</button>
+        </div>
+        <div class="card">
+          <div id="waitlist-loading"><span class="spinner"></span></div>
+          <div id="waitlist-table" class="table-wrap" style="display:none">
+            <table><thead><tr><th>Correo</th><th>Fecha</th></tr></thead>
+            <tbody id="waitlist-body"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- MOBILE NAV -->
+  <nav class="mobile-nav">
+    <button class="mnav-item active" onclick="goTo('dashboard')" id="mnav-dashboard">
+      <div class="mnav-icon" style="position:relative">📊</div>
+      <span class="mnav-label">Dashboard</span>
+    </button>
+    <button class="mnav-item" onclick="goTo('pedidos')" id="mnav-pedidos">
+      <div class="mnav-icon" style="position:relative">🧾<span class="mnav-badge" id="mnav-badge" style="display:none">0</span></div>
+      <span class="mnav-label">Pedidos</span>
+    </button>
+    <button class="mnav-item" onclick="goTo('accesos')" id="mnav-accesos">
+      <div class="mnav-icon">🔑</div>
+      <span class="mnav-label">Accesos</span>
+    </button>
+    <button class="mnav-item" onclick="goTo('productos')" id="mnav-productos">
+      <div class="mnav-icon">📦</div>
+      <span class="mnav-label">Productos</span>
+    </button>
+    <button class="mnav-item" onclick="goTo('waitlist')" id="mnav-waitlist">
+      <div class="mnav-icon">📋</div>
+      <span class="mnav-label">Espera</span>
+    </button>
+  </nav>
+
+</div>
+
+<!-- MODAL: Detalle pedido -->
+<div class="modal-bg" id="modal-pedido">
+  <div class="modal" style="max-width:580px">
+    <div class="modal-header">
+      <div class="modal-title">Detalle del pedido</div>
+      <button class="modal-close" onclick="closeModal('modal-pedido')">✕</button>
+    </div>
+    <div id="modal-pedido-body"></div>
+  </div>
+</div>
+
+<!-- MODAL: Acceso manual -->
+<div class="modal-bg" id="modal-acceso">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Dar acceso manual</div>
+      <button class="modal-close" onclick="closeModal('modal-acceso')">✕</button>
+    </div>
+    <div class="form-group"><label>ID del usuario (copiado de la tabla de usuarias)</label><input class="fi" id="acceso-userid" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"></div>
+    <div class="form-group"><label>Producto</label>
+      <select class="fi" id="acceso-producto"><option value="">— Selecciona —</option></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-acceso')">Cancelar</button>
+      <button class="btn btn-primary" onclick="darAccesoManual()">Activar acceso</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Producto -->
+<div class="modal-bg" id="modal-producto">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-prod-title">Nuevo producto</div>
+      <button class="modal-close" onclick="closeModal('modal-producto')">✕</button>
+    </div>
+    <input type="hidden" id="prod-edit-id">
+    <div class="form-row">
+      <div class="form-group"><label>Nombre del producto</label><input class="fi" id="prod-nombre" placeholder="Ej: Cupcakes desde cero"></div>
+      <div class="form-group"><label>Icono (emoji)</label><input class="fi" id="prod-icono" placeholder="🎂" style="font-size:1.1rem"></div>
+    </div>
+    <div class="form-group"><label>Descripción breve</label><textarea class="fi" id="prod-desc" rows="2" placeholder="¿Qué incluye este producto?"></textarea></div>
+    <div class="form-row3">
+      <div class="form-group"><label>Precio (USD)</label><input class="fi" id="prod-precio" type="number" step="0.01" placeholder="29.00"></div>
+      <div class="form-group"><label>Tipo</label>
+        <select class="fi" id="prod-tipo">
+          <option value="curso">Curso</option>
+          <option value="herramienta">Herramienta</option>
+          <option value="combo">Combo</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Estado</label>
+        <select class="fi" id="prod-activo">
+          <option value="true">Activo</option>
+          <option value="false">Inactivo</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-producto')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarProducto()">Guardar producto</button>
+    </div>
+  </div>
+</div>
+
+<div class="notif" id="notif"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SB_URL = 'https://gjtucszugkbyuxemtmxj.supabase.co';
+const SB_KEY = 'sb_publishable_pF3-mN98CnjTPvzHXXLANQ_2VHWX2vm';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+
+let adminUser = null;
+let allPedidos = [];
+
+// ─── UTILS ───
+function notif(msg, type='info'){
+  const el = document.getElementById('notif');
+  el.textContent = msg;
+  el.className = 'notif show ' + type;
+  clearTimeout(el._t);
+  el._t = setTimeout(()=>el.classList.remove('show'), 3500);
+}
+function openModal(id){ document.getElementById(id).classList.add('open') }
+function closeModal(id){ document.getElementById(id).classList.remove('open') }
+function fmt(n){ return '$' + parseFloat(n||0).toFixed(2) }
+function fmtDate(d){ return new Date(d).toLocaleDateString('es-VE',{day:'2-digit',month:'short',year:'numeric'}) }
+function estadoBadge(e){
+  const map={confirmado:'badge-green',pendiente:'badge-amber',cancelado:'badge-red'};
+  const lbl={confirmado:'Confirmado',pendiente:'Pendiente',cancelado:'Cancelado'};
+  return `<span class="badge ${map[e]||'badge-gray'}">${lbl[e]||e}</span>`;
+}
+function metodoPago(m){
+  return {zinli:'Zinli',binance:'Binance Pay',pago_movil:'Pago Móvil',davivienda:'Davivienda',bancolombia:'Bancolombia'}[m]||m||'—';
+}
+function shortId(id){ return id ? id.substring(0,10)+'...' : '—' }
+
+// ─── AUTH ───
+async function loginAdmin(){
+  const email = document.getElementById('gate-email').value.trim();
+  const pass  = document.getElementById('gate-password').value;
+  const errEl = document.getElementById('gate-error');
+  const btn   = document.getElementById('gate-btn');
+  errEl.style.display='none';
+  if(!email||!pass){ errEl.textContent='Completa todos los campos.'; errEl.style.display='block'; return; }
+  btn.disabled=true; btn.textContent='Verificando...';
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  btn.disabled=false; btn.textContent='Entrar al CRM';
+  if(error){ errEl.textContent='Correo o contraseña incorrectos.'; errEl.style.display='block'; return; }
+  if(data.user?.user_metadata?.rol !== 'admin'){
+    await sb.auth.signOut();
+    errEl.textContent='No tienes permisos de administradora.'; errEl.style.display='block'; return;
+  }
+  initCRM(data.user);
+}
+
+async function logoutAdmin(){
+  await sb.auth.signOut();
+  location.reload();
+}
+
+function initCRM(user){
+  adminUser = user;
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('crm-app').style.display = 'flex';
+  const nombre = user.user_metadata?.nombre || user.email.split('@')[0];
+  document.getElementById('nav-name').textContent = nombre;
+  document.getElementById('nav-initial').textContent = nombre.charAt(0).toUpperCase();
+  loadDashboard();
+}
+
+// ─── NAVIGATION ───
+function goTo(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.mnav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page)?.classList.add('active');
+  document.getElementById('nav-'+page)?.classList.add('active');
+  document.getElementById('mnav-'+page)?.classList.add('active');
+  const loaders={pedidos:loadPedidos,accesos:loadAccesos,usuarios:loadUsuarios,productos:loadProductos,waitlist:loadWaitlist};
+  if(loaders[page]) loaders[page]();
+}
+
+// ─── DASHBOARD ───
+async function loadDashboard(){
+  const [accRes, pedRes, pendRes, prodsRes] = await Promise.all([
+    sb.from('accesos').select('id',{count:'exact',head:true}).eq('activo',true),
+    sb.from('pedidos').select('total').eq('estado','confirmado'),
+    sb.from('pedidos').select('id',{count:'exact',head:true}).eq('estado','pendiente'),
+    sb.from('pedidos').select('id',{count:'exact',head:true}),
+  ]);
+
+  const ingresos = (pedRes.data||[]).reduce((s,p)=>s+parseFloat(p.total),0);
+  const pendCount = pendRes.count||0;
+
+  document.getElementById('kpi-accesos').textContent = accRes.count||0;
+  document.getElementById('kpi-ingresos').textContent = fmt(ingresos);
+  document.getElementById('kpi-pendientes').textContent = pendCount;
+  document.getElementById('kpi-total-pedidos').textContent = prodsRes.count||0;
+
+  if(pendCount > 0){
+    document.getElementById('pill-pendientes').textContent = pendCount;
+    document.getElementById('pill-pendientes').style.display='';
+    document.getElementById('mnav-badge').textContent = pendCount;
+    document.getElementById('mnav-badge').style.display='flex';
+  }
+
+  // Últimos 5 pedidos
+  const { data: ultPed } = await sb.from('pedidos')
+    .select('*, pedido_items(*, producto:productos(nombre,icono))')
+    .order('created_at',{ascending:false}).limit(5);
+
+  const dashPed = document.getElementById('dash-pedidos-wrap');
+  if(!ultPed?.length){
+    dashPed.innerHTML='<div class="empty-state"><div class="empty-icon">🧾</div><div class="empty-title">Sin pedidos aún</div><div class="empty-desc">Aquí aparecerán los pedidos de tus alumnas.</div></div>';
+  } else {
+    dashPed.innerHTML=`<div class="table-wrap"><table><thead><tr><th>ID</th><th>Total</th><th>Estado</th><th>Fecha</th></tr></thead><tbody>
+      ${ultPed.map(p=>`<tr>
+        <td class="td-mono">${shortId(p.id)}</td>
+        <td style="font-weight:600;color:var(--blue-600)">${fmt(p.total)}</td>
+        <td>${estadoBadge(p.estado)}</td>
+        <td>${fmtDate(p.created_at)}</td>
+      </tr>`).join('')}
+    </tbody></table></div>`;
+  }
+
+  // Productos
+  const { data: prods } = await sb.from('productos').select('*').order('precio');
+  const dashProd = document.getElementById('dash-productos-wrap');
+  if(!prods?.length){
+    dashProd.innerHTML='<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">Sin productos</div><div class="empty-desc">Agrega tus cursos y herramienta desde la sección Productos.</div></div>';
+  } else {
+    dashProd.innerHTML = prods.map(p=>`
+      <div style="display:flex;align-items:center;gap:.75rem;padding:.65rem 0;border-bottom:1px solid var(--gray-100)">
+        <span style="font-size:1.4rem">${p.icono||'📦'}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.83rem;font-weight:600;color:var(--gray-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.nombre}</div>
+          <div style="font-size:.7rem;color:var(--gray-400)">${p.tipo}</div>
+        </div>
+        <div style="font-weight:600;color:var(--blue-600);font-size:.85rem;white-space:nowrap">${fmt(p.precio)}</div>
+        ${p.activo?'<span class="badge badge-green">Activo</span>':'<span class="badge badge-gray">Inactivo</span>'}
+      </div>`).join('');
+  }
+}
+
+// ─── PEDIDOS ───
+async function loadPedidos(){
+  document.getElementById('pedidos-loading').style.display='block';
+  document.getElementById('pedidos-table').style.display='none';
+  const { data } = await sb.from('pedidos')
+    .select('*, pedido_items(*, producto:productos(nombre,icono))')
+    .order('created_at',{ascending:false});
+  allPedidos = data||[];
+  document.getElementById('pedidos-loading').style.display='none';
+  renderPedidos(allPedidos);
+  document.getElementById('pedidos-table').style.display='block';
+}
+
+function renderPedidos(list){
+  document.getElementById('pedidos-body').innerHTML = !list.length
+    ? '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">🧾</div><div class="empty-title">Sin pedidos</div></div></td></tr>'
+    : list.map(p=>{
+        const prods = p.pedido_items?.map(i=>`${i.producto?.icono||'📦'} ${i.producto?.nombre||'?'}`).join(' · ')||'—';
+        return `<tr>
+          <td><span class="td-mono">${shortId(p.user_id)}</span></td>
+          <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${prods}">${prods}</td>
+          <td style="font-weight:600;color:var(--blue-600)">${fmt(p.total)}</td>
+          <td>${metodoPago(p.metodo_pago)}</td>
+          <td>${estadoBadge(p.estado)}</td>
+          <td>${fmtDate(p.created_at)}</td>
+          <td><div class="td-actions">
+            <button class="btn btn-ghost btn-xs" onclick='verPedido(${JSON.stringify(p).replace(/'/g,"&#39;")})'>Ver</button>
+            ${p.estado==='pendiente'?`
+              <button class="btn btn-success btn-xs" onclick="confirmarPedido('${p.id}','${p.user_id}',${JSON.stringify(p.pedido_items).replace(/'/g,"&#39;")})">✓ Confirmar</button>
+              <button class="btn btn-danger btn-xs" onclick="cancelarPedido('${p.id}')">✕</button>`
+            : p.estado==='confirmado'?`<button class="btn btn-danger btn-xs" onclick="cancelarPedido('${p.id}')">✕ Cancelar</button>`:''}
+          </div></td>
+        </tr>`;
+      }).join('');
+}
+
+function filterPedidos(){
+  const q = document.getElementById('search-pedidos').value.toLowerCase();
+  const est = document.getElementById('filter-estado').value;
+  renderPedidos(allPedidos.filter(p=>
+    (!q || p.user_id.toLowerCase().includes(q) || p.id.toLowerCase().includes(q)) &&
+    (!est || p.estado===est)
+  ));
+}
+
+function verPedido(p){
+  const prods = p.pedido_items?.map(i=>`
+    <div style="display:flex;align-items:center;gap:.6rem;padding:.5rem 0;border-bottom:1px solid var(--gray-100)">
+      <span style="font-size:1.2rem">${i.producto?.icono||'📦'}</span>
+      <div style="flex:1;font-size:.83rem;color:var(--gray-700)">${i.producto?.nombre||'Producto'}</div>
+      <div style="font-weight:600;color:var(--blue-600)">${fmt(i.precio)}</div>
+    </div>`).join('')||'<div style="color:var(--gray-400);font-size:.82rem">Sin productos</div>';
+
+  document.getElementById('modal-pedido-body').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem">
+      <div style="background:var(--blue-50);border-radius:10px;padding:.75rem">
+        <div style="font-size:.65rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Total</div>
+        <div style="font-family:Fraunces,serif;font-size:1.4rem;font-weight:600;color:var(--blue-600)">${fmt(p.total)}</div>
+      </div>
+      <div style="background:var(--gray-50);border-radius:10px;padding:.75rem">
+        <div style="font-size:.65rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Estado</div>
+        <div style="margin-top:4px">${estadoBadge(p.estado)}</div>
+      </div>
+      <div style="background:var(--gray-50);border-radius:10px;padding:.75rem">
+        <div style="font-size:.65rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Método de pago</div>
+        <div style="font-size:.83rem;font-weight:600;color:var(--gray-700)">${metodoPago(p.metodo_pago)}</div>
+      </div>
+      <div style="background:var(--gray-50);border-radius:10px;padding:.75rem">
+        <div style="font-size:.65rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Fecha</div>
+        <div style="font-size:.83rem;color:var(--gray-700)">${fmtDate(p.created_at)}</div>
+      </div>
+    </div>
+    <div style="font-size:.72rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem">Productos</div>
+    <div style="margin-bottom:1rem">${prods}</div>
+    ${p.notas?`<div style="background:var(--blue-50);border-radius:9px;padding:.75rem 1rem;font-size:.82rem;color:var(--gray-700);margin-bottom:1rem"><strong>Notas:</strong> ${p.notas}</div>`:''}
+    ${p.comprobante_url?`
+      <div style="font-size:.72rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem">Comprobante de pago</div>
+      <img src="${p.comprobante_url}" class="comprobante-img" onerror="this.replaceWith(Object.assign(document.createElement('p'),{textContent:'No se pudo cargar la imagen.',style:'color:var(--gray-400);font-size:.8rem'}))">
+    `:'<div style="background:var(--amber-100);border-radius:9px;padding:.7rem 1rem;font-size:.82rem;color:var(--amber-600)">⚠ Sin comprobante adjunto</div>'}
+    ${p.estado==='pendiente'?`
+    <div style="display:flex;gap:.75rem;margin-top:1.25rem">
+      <button class="btn btn-success" style="flex:1;justify-content:center" onclick="confirmarPedido('${p.id}','${p.user_id}',${JSON.stringify(p.pedido_items).replace(/'/g,"&#39;")});closeModal('modal-pedido')">✓ Confirmar pago y activar acceso</button>
+      <button class="btn btn-danger btn-sm" onclick="cancelarPedido('${p.id}');closeModal('modal-pedido')">✕ Cancelar</button>
+    </div>`:''}`;
+  openModal('modal-pedido');
+}
+
+async function confirmarPedido(pedidoId, userId, items){
+  const { error } = await sb.from('pedidos').update({estado:'confirmado'}).eq('id',pedidoId);
+  if(error){ notif('Error al confirmar pedido.','error'); return; }
+  if(items?.length){
+    const acc = items.map(i=>({user_id:userId,producto_id:i.producto_id,pedido_id:pedidoId,activo:true}));
+    await sb.from('accesos').upsert(acc,{onConflict:'user_id,producto_id'});
+  }
+  notif('✓ Pago confirmado y acceso activado.','success');
+  loadPedidos(); loadDashboard();
+}
+
+async function cancelarPedido(pedidoId){
+  if(!confirm('¿Cancelar este pedido?')) return;
+  await sb.from('pedidos').update({estado:'cancelado'}).eq('id',pedidoId);
+  notif('Pedido cancelado.','info');
+  loadPedidos(); loadDashboard();
+}
+
+// ─── ACCESOS ───
+async function loadAccesos(){
+  document.getElementById('accesos-loading').style.display='block';
+  document.getElementById('accesos-table').style.display='none';
+  const { data } = await sb.from('accesos')
+    .select('*, producto:productos(nombre,icono,tipo)')
+    .order('otorgado_en',{ascending:false});
+  document.getElementById('accesos-loading').style.display='none';
+  document.getElementById('accesos-body').innerHTML = !data?.length
+    ? '<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">🔑</div><div class="empty-title">Sin accesos registrados</div></div></td></tr>'
+    : data.map(a=>`<tr>
+        <td class="td-mono">${shortId(a.user_id)}</td>
+        <td><span style="margin-right:.4rem">${a.producto?.icono||'📦'}</span>${a.producto?.nombre||'—'}</td>
+        <td>${a.activo?'<span class="badge badge-green">Activo</span>':'<span class="badge badge-gray">Inactivo</span>'}</td>
+        <td>${fmtDate(a.otorgado_en)}</td>
+        <td>${a.activo
+          ?`<button class="btn btn-danger btn-xs" onclick="toggleAcceso('${a.id}',false)">Desactivar</button>`
+          :`<button class="btn btn-success btn-xs" onclick="toggleAcceso('${a.id}',true)">Activar</button>`}
+        </td>
+      </tr>`).join('');
+  document.getElementById('accesos-table').style.display='block';
+}
+
+async function toggleAcceso(id, activo){
+  await sb.from('accesos').update({activo}).eq('id',id);
+  notif(activo?'Acceso activado ✓':'Acceso desactivado.', activo?'success':'info');
+  loadAccesos();
+}
+
+async function abrirModalAcceso(){
+  const { data } = await sb.from('productos').select('id,nombre,icono').eq('activo',true).order('nombre');
+  const sel = document.getElementById('acceso-producto');
+  sel.innerHTML = '<option value="">— Selecciona —</option>' +
+    (data||[]).map(p=>`<option value="${p.id}">${p.icono||'📦'} ${p.nombre}</option>`).join('');
+  document.getElementById('acceso-userid').value='';
+  openModal('modal-acceso');
+}
+
+async function darAccesoManual(){
+  const userId = document.getElementById('acceso-userid').value.trim();
+  const prodId = document.getElementById('acceso-producto').value;
+  if(!userId||!prodId){ notif('Completa todos los campos.','error'); return; }
+  const { error } = await sb.from('accesos').upsert([{user_id:userId,producto_id:prodId,activo:true}],{onConflict:'user_id,producto_id'});
+  if(error){ notif('Error al dar acceso. Verifica el ID.','error'); return; }
+  notif('Acceso activado ✓','success');
+  closeModal('modal-acceso'); loadAccesos();
+}
+
+// ─── USUARIOS ───
+async function loadUsuarios(){
+  document.getElementById('usuarios-loading').style.display='block';
+  document.getElementById('usuarios-table').style.display='none';
+  const { data } = await sb.from('accesos')
+    .select('user_id, otorgado_en')
+    .eq('activo',true)
+    .order('otorgado_en',{ascending:false});
+  const map={};
+  (data||[]).forEach(a=>{
+    if(!map[a.user_id]) map[a.user_id]={user_id:a.user_id,fecha:a.otorgado_en,count:0};
+    map[a.user_id].count++;
+  });
+  const users = Object.values(map);
+  document.getElementById('usuarios-loading').style.display='none';
+  document.getElementById('usuarios-body').innerHTML = !users.length
+    ? '<tr><td colspan="4"><div class="empty-state"><div class="empty-icon">👥</div><div class="empty-title">Sin usuarias aún</div></div></td></tr>'
+    : users.map(u=>`<tr>
+        <td class="td-mono" style="font-size:.75rem">${u.user_id}</td>
+        <td>${fmtDate(u.fecha)}</td>
+        <td><span class="badge badge-blue">${u.count} acceso${u.count!==1?'s':''}</span></td>
+        <td><button class="btn btn-ghost btn-xs" onclick="navigator.clipboard.writeText('${u.user_id}');notif('ID copiado ✓','success')">Copiar ID</button></td>
+      </tr>`).join('');
+  document.getElementById('usuarios-table').style.display='block';
+}
+
+// ─── PRODUCTOS ───
+async function loadProductos(){
+  document.getElementById('productos-loading').style.display='block';
+  document.getElementById('productos-table').style.display='none';
+  const { data } = await sb.from('productos').select('*').order('precio');
+  document.getElementById('productos-loading').style.display='none';
+  document.getElementById('productos-body').innerHTML = !data?.length
+    ? '<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">Sin productos</div><div class="empty-desc">Agrega tu primer curso o herramienta.</div></div></td></tr>'
+    : data.map(p=>`<tr>
+        <td>
+          <div style="display:flex;align-items:center;gap:.65rem">
+            <span style="font-size:1.4rem">${p.icono||'📦'}</span>
+            <div>
+              <div class="td-name">${p.nombre}</div>
+              <div style="font-size:.71rem;color:var(--gray-400);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.descripcion||''}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="badge ${p.tipo==='curso'?'badge-blue':p.tipo==='herramienta'?'badge-green':'badge-pink'}">${p.tipo}</span></td>
+        <td style="font-weight:600;color:var(--blue-600)">${fmt(p.precio)}</td>
+        <td>${p.activo?'<span class="badge badge-green">Activo</span>':'<span class="badge badge-gray">Inactivo</span>'}</td>
+        <td><div class="td-actions">
+          <button class="btn btn-ghost btn-xs" onclick='editarProducto(${JSON.stringify(p).replace(/'/g,"&#39;")})'>Editar</button>
+          <button class="btn btn-xs ${p.activo?'btn-danger':'btn-success'}" onclick="toggleProducto('${p.id}',${!p.activo})">${p.activo?'Desactivar':'Activar'}</button>
+        </div></td>
+      </tr>`).join('');
+  document.getElementById('productos-table').style.display='block';
+}
+
+function abrirModalProducto(){
+  document.getElementById('modal-prod-title').textContent='Nuevo producto';
+  document.getElementById('prod-edit-id').value='';
+  ['prod-nombre','prod-icono','prod-desc','prod-precio'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('prod-tipo').value='curso';
+  document.getElementById('prod-activo').value='true';
+  openModal('modal-producto');
+}
+
+function editarProducto(p){
+  document.getElementById('modal-prod-title').textContent='Editar producto';
+  document.getElementById('prod-edit-id').value=p.id;
+  document.getElementById('prod-nombre').value=p.nombre||'';
+  document.getElementById('prod-icono').value=p.icono||'';
+  document.getElementById('prod-desc').value=p.descripcion||'';
+  document.getElementById('prod-precio').value=p.precio||'';
+  document.getElementById('prod-tipo').value=p.tipo||'curso';
+  document.getElementById('prod-activo').value=String(p.activo);
+  openModal('modal-producto');
+}
+
+async function guardarProducto(){
+  const id     = document.getElementById('prod-edit-id').value;
+  const nombre = document.getElementById('prod-nombre').value.trim();
+  const precio = parseFloat(document.getElementById('prod-precio').value);
+  if(!nombre||!precio){ notif('Completa nombre y precio.','error'); return; }
+  const payload={
+    nombre,
+    icono: document.getElementById('prod-icono').value.trim(),
+    descripcion: document.getElementById('prod-desc').value.trim(),
+    precio,
+    tipo: document.getElementById('prod-tipo').value,
+    activo: document.getElementById('prod-activo').value==='true',
+  };
+  const { error } = id
+    ? await sb.from('productos').update(payload).eq('id',id)
+    : await sb.from('productos').insert([payload]);
+  if(error){ notif('Error al guardar.','error'); return; }
+  notif(id?'Producto actualizado ✓':'Producto creado ✓','success');
+  closeModal('modal-producto');
+  loadProductos(); loadDashboard();
+}
+
+async function toggleProducto(id, activo){
+  await sb.from('productos').update({activo}).eq('id',id);
+  notif(activo?'Producto activado ✓':'Producto desactivado.', activo?'success':'info');
+  loadProductos();
+}
+
+// ─── WAITLIST ───
+async function loadWaitlist(){
+  document.getElementById('waitlist-loading').style.display='block';
+  document.getElementById('waitlist-table').style.display='none';
+  const { data } = await sb.from('waitlist').select('*').order('created_at',{ascending:false});
+  document.getElementById('waitlist-loading').style.display='none';
+  document.getElementById('waitlist-body').innerHTML = !data?.length
+    ? '<tr><td colspan="2"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Sin correos aún</div></div></td></tr>'
+    : data.map(w=>`<tr><td class="td-email">${w.email}</td><td>${fmtDate(w.created_at)}</td></tr>`).join('');
+  document.getElementById('waitlist-table').style.display='block';
+}
+
+// ─── CERRAR MODALES AL CLICKAR FUERA ───
+document.querySelectorAll('.modal-bg').forEach(bg=>{
+  bg.addEventListener('click',e=>{ if(e.target===bg) bg.classList.remove('open') });
+});
+
+// ─── INIT ───
+(async()=>{
+  const { data:{ session } } = await sb.auth.getSession();
+  if(session?.user?.user_metadata?.rol==='admin') initCRM(session.user);
+})();
+</script>
+</body>
+</html>

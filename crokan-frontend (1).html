@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crokan enseña by Andrea V. — Escuela de Repostería</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,300;0,600;1,300;1,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#ffffff;--bg:#f4f8ff;
+  --blue-50:#eff6ff;--blue-100:#dbeafe;--blue-200:#bfdbfe;
+  --blue-400:#60a5fa;--blue-500:#3b82f6;--blue-600:#2563eb;--blue-700:#1d4ed8;
+  --pink-50:#fdf2f8;--pink-100:#fce7f3;--pink-200:#fbcfe8;
+  --pink-400:#f472b6;--pink-500:#ec4899;--pink-600:#db2777;
+  --gray-400:#94a3b8;--gray-500:#64748b;--gray-700:#334155;--gray-900:#0f172a;
+  --radius:16px;--radius-sm:10px;
+  --shadow:0 4px 24px rgba(59,130,246,0.10);--shadow-lg:0 12px 48px rgba(59,130,246,0.16);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--gray-900);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* NAV */
+nav{position:fixed;top:0;width:100%;z-index:200;background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--blue-100);height:64px;display:flex;align-items:center;padding:0 clamp(1rem,5vw,3rem);gap:1rem}
+.nav-logo{display:flex;align-items:center;gap:0.5rem;text-decoration:none;flex-shrink:0}
+.nav-logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--blue-500),var(--pink-500));display:flex;align-items:center;justify-content:center}
+.nav-logo-text{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:600;color:var(--gray-900);line-height:1}
+.nav-logo-text span{color:var(--pink-500)}
+.nav-spacer{flex:1}
+.nav-links{display:flex;gap:0.25rem;list-style:none;align-items:center}
+.nav-links a{padding:0.45rem 0.85rem;border-radius:8px;font-size:0.82rem;font-weight:500;color:var(--gray-500);text-decoration:none;transition:all .2s}
+.nav-links a:hover{background:var(--blue-50);color:var(--blue-600)}
+.nav-btn{display:flex;align-items:center;gap:0.4rem;background:var(--blue-600);color:white!important;padding:0.5rem 1.1rem!important;border-radius:10px!important;font-weight:600!important;font-size:0.82rem!important;box-shadow:0 2px 12px rgba(37,99,235,0.3);transition:all .2s!important}
+.nav-btn:hover{background:var(--blue-700)!important;transform:translateY(-1px)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:none}
+.hamburger span{display:block;width:22px;height:2px;background:var(--gray-700);border-radius:2px;transition:all .3s}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:white;border-bottom:1px solid var(--blue-100);padding:1rem;z-index:199;flex-direction:column;gap:0.3rem}
+.mobile-menu.open{display:flex}
+.mobile-menu a{padding:0.7rem 1rem;border-radius:10px;color:var(--gray-700);text-decoration:none;font-weight:500;transition:background .2s;display:flex;align-items:center;gap:0.7rem}
+.mobile-menu a:hover{background:var(--blue-50);color:var(--blue-600)}
+
+/* HERO */
+.hero{min-height:100svh;padding:calc(64px + 3rem) clamp(1rem,5vw,3rem) 3rem;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(160deg,var(--white) 0%,var(--blue-50) 50%,var(--pink-50) 100%);position:relative;overflow:hidden}
+.hero-blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.5;pointer-events:none}
+.hero-blob-1{width:400px;height:400px;background:var(--blue-200);top:-100px;right:-80px}
+.hero-blob-2{width:300px;height:300px;background:var(--pink-200);bottom:-50px;left:-50px}
+.hero-inner{max-width:1200px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:0.5rem;background:white;border:1px solid var(--blue-200);padding:0.4rem 0.9rem;border-radius:100px;font-size:0.75rem;font-weight:600;color:var(--blue-600);margin-bottom:1.5rem;width:fit-content;box-shadow:0 2px 8px rgba(59,130,246,0.1)}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(2.2rem,4vw,3.8rem);font-weight:600;line-height:1.1;color:var(--gray-900);margin-bottom:1.2rem}
+.hero h1 em{font-style:italic;color:var(--pink-500)}
+.hero-desc{font-size:1rem;color:var(--gray-500);line-height:1.75;margin-bottom:2rem;max-width:460px}
+.hero-actions{display:flex;gap:0.75rem;flex-wrap:wrap}
+.btn-primary{display:inline-flex;align-items:center;gap:0.5rem;background:linear-gradient(135deg,var(--blue-600),var(--blue-500));color:white;padding:0.75rem 1.5rem;border-radius:12px;font-size:0.9rem;font-weight:600;text-decoration:none;border:none;cursor:pointer;transition:all .25s;box-shadow:0 4px 16px rgba(37,99,235,0.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,99,235,0.35)}
+.btn-ghost{display:inline-flex;align-items:center;gap:0.5rem;background:white;color:var(--gray-700);padding:0.75rem 1.5rem;border-radius:12px;font-size:0.9rem;font-weight:600;text-decoration:none;border:1.5px solid var(--blue-200);cursor:pointer;transition:all .25s}
+.btn-ghost:hover{border-color:var(--blue-400);color:var(--blue-600);background:var(--blue-50)}
+.hero-trust{display:flex;align-items:center;gap:1rem;margin-top:1.5rem;font-size:0.8rem;color:var(--gray-400)}
+.hero-avatars{display:flex}
+.hero-avatars span{width:28px;height:28px;border-radius:50%;border:2px solid white;background:linear-gradient(135deg,var(--blue-400),var(--pink-400));display:inline-flex;align-items:center;justify-content:center;font-size:0.65rem;margin-left:-6px}
+.hero-avatars span:first-child{margin-left:0}
+.hero-visual{display:grid;grid-template-columns:1fr 1fr;gap:12px;animation:fadeUp .8s .2s ease both}
+.hv-card{background:white;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s}
+.hv-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+.hv-card:nth-child(2),.hv-card:nth-child(4){margin-top:24px}
+.hv-thumb{height:110px;display:flex;align-items:center;justify-content:center;font-size:2.8rem}
+.hv-c1{background:linear-gradient(135deg,#dbeafe,#bfdbfe)}
+.hv-c2{background:linear-gradient(135deg,#fce7f3,#fbcfe8)}
+.hv-c3{background:linear-gradient(135deg,#ede9fe,#ddd6fe)}
+.hv-c4{background:linear-gradient(135deg,#d1fae5,#a7f3d0)}
+.hv-body{padding:.75rem}
+.hv-body strong{font-size:.82rem;color:var(--gray-900);display:block;margin-bottom:2px}
+.hv-body span{font-size:.72rem;color:var(--gray-400)}
+.hv-pill{display:inline-block;font-size:.62rem;font-weight:600;padding:2px 7px;border-radius:100px;margin-top:4px}
+.pill-blue{background:var(--blue-100);color:var(--blue-600)}
+.pill-pink{background:var(--pink-100);color:var(--pink-600)}
+.pill-purple{background:#ede9fe;color:#7c3aed}
+.pill-green{background:#d1fae5;color:#059669}
+
+/* STATS BAR */
+.stats-bar{background:linear-gradient(135deg,var(--blue-600),var(--blue-700));padding:2rem clamp(1rem,5vw,3rem);display:flex;justify-content:center;gap:clamp(2rem,5vw,5rem);flex-wrap:wrap}
+.stat{text-align:center;color:white}
+.stat-num{font-family:'Fraunces',serif;font-size:2.2rem;font-weight:600;line-height:1}
+.stat-label{font-size:.75rem;opacity:.75;margin-top:.3rem;font-weight:500}
+
+/* SECTIONS */
+.section{padding:5rem clamp(1rem,5vw,3rem)}
+.section-inner{max-width:1200px;margin:0 auto}
+.chip{display:inline-flex;align-items:center;gap:.4rem;background:var(--blue-100);color:var(--blue-600);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.35rem .85rem;border-radius:100px;margin-bottom:1rem}
+.chip-pink{background:var(--pink-100);color:var(--pink-600)}
+.section-title{font-family:'Fraunces',serif;font-size:clamp(1.8rem,3vw,2.8rem);font-weight:600;color:var(--gray-900);line-height:1.15;margin-bottom:.75rem}
+.section-title em{font-style:italic;color:var(--pink-500)}
+.section-sub{font-size:.95rem;color:var(--gray-500);line-height:1.75;max-width:540px;margin-bottom:2.5rem}
+
+/* CURSOS */
+#cursos{background:white}
+.filter-bar{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem}
+.filter-btn{display:flex;align-items:center;gap:.35rem;padding:.5rem 1rem;border-radius:100px;border:1.5px solid var(--blue-200);background:white;font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;font-weight:600;color:var(--gray-500);cursor:pointer;transition:all .2s}
+.filter-btn:hover,.filter-btn.active{background:var(--blue-600);border-color:var(--blue-600);color:white}
+.courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:1.25rem}
+.course-card{background:white;border-radius:var(--radius);border:1.5px solid var(--blue-100);overflow:hidden;cursor:pointer;transition:all .3s;position:relative}
+.course-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);border-color:var(--blue-300)}
+.course-thumb{height:175px;display:flex;align-items:center;justify-content:center;font-size:4rem;position:relative}
+.course-tag{position:absolute;top:10px;left:10px;font-size:.65rem;font-weight:700;padding:3px 10px;border-radius:100px}
+.tag-sale{background:#fef3c7;color:#d97706}
+.tag-new{background:var(--pink-100);color:var(--pink-600)}
+.tag-top{background:var(--blue-100);color:var(--blue-600)}
+.course-body{padding:1.1rem 1.2rem 1.2rem}
+.course-level{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-400);margin-bottom:.35rem;display:flex;align-items:center;gap:.3rem}
+.course-title{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:600;color:var(--gray-900);margin-bottom:.4rem;line-height:1.25}
+.course-desc{font-size:.8rem;color:var(--gray-500);line-height:1.65;margin-bottom:1rem}
+.course-meta{display:flex;gap:.9rem;margin-bottom:1rem}
+.course-meta-item{display:flex;align-items:center;gap:.3rem;font-size:.75rem;color:var(--gray-400);font-weight:500}
+.course-footer{display:flex;align-items:center;justify-content:space-between;padding-top:.9rem;border-top:1px solid var(--blue-50)}
+.course-price{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:600;color:var(--gray-900)}
+.course-price sub{font-size:.7rem;font-weight:400;color:var(--gray-400);font-family:'Plus Jakarta Sans',sans-serif}
+.btn-enroll{display:inline-flex;align-items:center;gap:.35rem;background:var(--pink-500);color:white;border:none;padding:.55rem 1.1rem;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-enroll:hover{background:var(--pink-600);transform:translateY(-1px)}
+
+/* HERRAMIENTA DESTACADA */
+#herramienta{background:linear-gradient(160deg,var(--blue-50),var(--pink-50))}
+.tool-wrap{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
+.tool-preview{background:white;border-radius:20px;box-shadow:var(--shadow-lg);overflow:hidden;border:1.5px solid var(--blue-100)}
+.tool-preview-top{background:linear-gradient(135deg,var(--blue-600),var(--pink-500));padding:1.2rem 1.5rem;display:flex;align-items:center;gap:.75rem}
+.tool-preview-top span{font-family:'Fraunces',serif;font-size:1rem;font-weight:600;color:white}
+.tool-screens{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:1rem}
+.tool-screen{background:var(--bg);border-radius:10px;padding:.75rem;border:1px solid var(--blue-100)}
+.tool-screen-title{font-size:.65rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem}
+.tool-screen-val{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:600;color:var(--blue-600)}
+.tool-screen-sub{font-size:.65rem;color:var(--gray-400);margin-top:1px}
+.tool-features{display:flex;flex-direction:column;gap:.6rem;margin:1.5rem 0}
+.tool-feature{display:flex;align-items:center;gap:.75rem;font-size:.88rem;color:var(--gray-700)}
+.tool-feature-icon{width:28px;height:28px;border-radius:8px;background:var(--blue-100);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.tool-price-box{background:white;border:1.5px solid var(--blue-200);border-radius:14px;padding:1.2rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.tool-price{font-family:'Fraunces',serif;font-size:2rem;font-weight:600;color:var(--gray-900)}
+.tool-price sub{font-size:.8rem;font-weight:400;color:var(--gray-400);font-family:'Plus Jakarta Sans',sans-serif}
+
+/* COMBOS */
+#combos{background:white}
+.combos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem}
+.combo-card{border-radius:var(--radius);padding:1.75rem;border:1.5px solid var(--blue-100);background:white;position:relative;transition:all .3s}
+.combo-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.combo-card.featured{border-color:var(--blue-400);border-width:2px}
+.combo-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--blue-600),var(--pink-500));color:white;font-size:.7rem;font-weight:700;padding:4px 16px;border-radius:100px;white-space:nowrap}
+.combo-icon{font-size:2.5rem;margin-bottom:.75rem}
+.combo-name{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:600;color:var(--gray-900);margin-bottom:.4rem}
+.combo-desc{font-size:.82rem;color:var(--gray-500);line-height:1.65;margin-bottom:1.2rem}
+.combo-includes{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1.4rem}
+.combo-item{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--gray-700)}
+.combo-check{width:16px;height:16px;border-radius:50%;background:var(--blue-100);color:var(--blue-600);display:flex;align-items:center;justify-content:center;font-size:.6rem;flex-shrink:0}
+.combo-price-row{display:flex;align-items:baseline;gap:.5rem;margin-bottom:1rem}
+.combo-price{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:600;color:var(--gray-900)}
+.combo-old{font-size:.9rem;color:var(--gray-400);text-decoration:line-through}
+.combo-save{font-size:.75rem;font-weight:700;color:var(--pink-600);background:var(--pink-100);padding:2px 8px;border-radius:20px}
+
+/* INSTRUCTORA */
+#instructora{background:var(--bg)}
+.instructor-wrap{display:grid;grid-template-columns:380px 1fr;gap:3.5rem;align-items:center}
+.instr-photo-wrap{position:relative}
+.instr-photo{width:100%;aspect-ratio:4/5;border-radius:24px;background:linear-gradient(160deg,var(--blue-100),var(--pink-100));display:flex;align-items:center;justify-content:center;font-size:9rem;box-shadow:var(--shadow-lg)}
+.instr-floating-card{position:absolute;bottom:-16px;right:-16px;background:white;border-radius:var(--radius-sm);padding:1rem 1.2rem;box-shadow:var(--shadow-lg);border:1.5px solid var(--blue-100)}
+.instr-floating-card .big{font-family:'Fraunces',serif;font-size:2rem;font-weight:600;color:var(--blue-600)}
+.instr-floating-card .lbl{font-size:.7rem;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.08em}
+.instr-info p{font-size:.95rem;color:var(--gray-500);line-height:1.8;margin-bottom:1.2rem}
+.skill-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem}
+.skill-tag{padding:.4rem .9rem;border-radius:100px;background:white;border:1.5px solid var(--blue-200);font-size:.75rem;font-weight:600;color:var(--blue-700)}
+
+/* COMO FUNCIONA */
+#como-funciona{background:white}
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.25rem}
+.step-card{background:var(--bg);border-radius:var(--radius);padding:1.8rem 1.5rem;text-align:center;border:1.5px solid var(--blue-100);transition:all .3s}
+.step-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--blue-300)}
+.step-icon-wrap{width:56px;height:56px;border-radius:16px;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center}
+.si-blue{background:linear-gradient(135deg,var(--blue-500),var(--blue-400))}
+.si-pink{background:linear-gradient(135deg,var(--pink-500),var(--pink-400))}
+.si-purple{background:linear-gradient(135deg,#8b5cf6,#a78bfa)}
+.si-green{background:linear-gradient(135deg,#10b981,#34d399)}
+.step-num{font-size:.65rem;font-weight:700;color:var(--gray-400);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem}
+.step-card h3{font-size:1rem;font-weight:700;color:var(--gray-900);margin-bottom:.5rem}
+.step-card p{font-size:.82rem;color:var(--gray-500);line-height:1.65}
+
+/* TESTIMONIOS */
+#testimonios{background:linear-gradient(160deg,var(--blue-600),var(--blue-700))}
+#testimonios .section-title{color:white}
+#testimonios .section-sub{color:rgba(255,255,255,.7)}
+#testimonios .chip{background:rgba(255,255,255,.15);color:white}
+.testimonials-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem}
+.testi-card{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:var(--radius);padding:1.5rem;backdrop-filter:blur(10px);transition:all .3s}
+.testi-card:hover{background:rgba(255,255,255,.16)}
+.stars{color:#fbbf24;font-size:.85rem;letter-spacing:2px;margin-bottom:.8rem}
+.testi-text{font-size:.88rem;color:rgba(255,255,255,.88);line-height:1.75;font-style:italic;margin-bottom:1.2rem}
+.testi-author{display:flex;align-items:center;gap:.75rem}
+.testi-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--blue-300),var(--pink-300));display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.testi-name{font-size:.85rem;font-weight:700;color:white}
+.testi-course{font-size:.72rem;color:rgba(255,255,255,.6);margin-top:1px}
+
+/* FAQ */
+#faq{background:var(--bg)}
+.faq-list{display:flex;flex-direction:column;gap:.75rem;max-width:720px}
+.faq-item{background:white;border-radius:var(--radius-sm);border:1.5px solid var(--blue-100);overflow:hidden;transition:all .2s}
+.faq-item.open{border-color:var(--blue-300)}
+.faq-question{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.3rem;cursor:pointer;font-weight:600;font-size:.9rem;color:var(--gray-900);gap:1rem}
+.faq-icon{width:24px;height:24px;border-radius:50%;background:var(--blue-100);color:var(--blue-600);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;transition:transform .3s}
+.faq-item.open .faq-icon{transform:rotate(45deg);background:var(--blue-600);color:white}
+.faq-answer{display:none;padding:0 1.3rem 1.1rem;font-size:.85rem;color:var(--gray-500);line-height:1.75}
+.faq-item.open .faq-answer{display:block}
+
+/* LANZAMIENTO BANNER */
+.launch-banner{background:linear-gradient(135deg,#0f172a,var(--blue-700));padding:3rem clamp(1rem,5vw,3rem);text-align:center;position:relative;overflow:hidden}
+.launch-banner::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 600px 300px at 50% 100%,rgba(236,72,153,0.2),transparent);pointer-events:none}
+.launch-inner{max-width:640px;margin:0 auto;position:relative;z-index:1}
+.launch-tag{display:inline-block;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:white;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.35rem .9rem;border-radius:100px;margin-bottom:1rem}
+.launch-banner h2{font-family:'Fraunces',serif;font-size:clamp(1.6rem,3vw,2.4rem);color:white;margin-bottom:.75rem;line-height:1.2}
+.launch-banner p{color:rgba(255,255,255,.7);font-size:.9rem;line-height:1.7;margin-bottom:1.5rem}
+.launch-form{display:flex;gap:.75rem;max-width:420px;margin:0 auto;flex-wrap:wrap;justify-content:center}
+.launch-input{flex:1;min-width:200px;padding:.75rem 1rem;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:white;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;outline:none;transition:border .2s}
+.launch-input::placeholder{color:rgba(255,255,255,.4)}
+.launch-input:focus{border-color:var(--pink-400);background:rgba(255,255,255,.15)}
+.btn-launch{display:inline-flex;align-items:center;gap:.5rem;background:var(--pink-500);color:white;padding:.75rem 1.5rem;border-radius:10px;font-size:.9rem;font-weight:700;border:none;cursor:pointer;transition:all .25s;white-space:nowrap}
+.btn-launch:hover{background:var(--pink-600);transform:translateY(-2px)}
+
+/* FOOTER */
+footer{background:var(--gray-900);color:white;padding:3.5rem clamp(1rem,5vw,3rem) 1.5rem}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:2.5rem}
+.footer-brand-logo{display:flex;align-items:center;gap:.5rem;margin-bottom:1rem}
+.footer-brand-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--blue-500),var(--pink-500));display:flex;align-items:center;justify-content:center}
+.footer-brand-name{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:600;color:white}
+.footer-brand-name span{color:var(--pink-400)}
+.footer-brand p{font-size:.83rem;color:rgba(255,255,255,.5);line-height:1.75;max-width:240px}
+.footer-col h4{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:1rem}
+.footer-col ul{list-style:none}
+.footer-col li{margin-bottom:.6rem}
+.footer-col a{font-size:.85rem;color:rgba(255,255,255,.6);text-decoration:none;transition:color .2s}
+.footer-col a:hover{color:var(--blue-400)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;font-size:.78rem;color:rgba(255,255,255,.35)}
+
+/* CART FAB */
+.cart-fab{position:fixed;bottom:1.5rem;right:1.5rem;z-index:150;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--pink-500),var(--pink-600));display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(236,72,153,0.4);border:none;transition:all .25s}
+.cart-fab:hover{transform:scale(1.08);box-shadow:0 8px 28px rgba(236,72,153,0.5)}
+.cart-badge{position:absolute;top:-3px;right:-3px;background:var(--blue-600);color:white;width:20px;height:20px;border-radius:50%;font-size:.65rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid white}
+
+/* MODALS */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(15,23,42,.6);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.active{display:flex}
+.modal{background:white;border-radius:20px;width:100%;max-width:460px;padding:2rem;position:relative;animation:slideUp .3s cubic-bezier(0.34,1.56,0.64,1);max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.2)}
+.modal-close{position:absolute;top:1rem;right:1rem;background:var(--bg);border:none;cursor:pointer;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gray-500);font-size:1rem;transition:all .2s}
+.modal-close:hover{background:var(--blue-100);color:var(--blue-600)}
+.modal-icon{width:48px;height:48px;border-radius:14px;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:linear-gradient(135deg,var(--blue-100),var(--pink-100))}
+.modal-title{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:600;color:var(--gray-900);margin-bottom:.25rem}
+.modal-sub{font-size:.83rem;color:var(--gray-400);margin-bottom:1.5rem}
+.modal-tabs{display:flex;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:1.5rem;gap:3px}
+.modal-tab{flex:1;padding:.55rem;background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;font-weight:600;color:var(--gray-400);cursor:pointer;border-radius:8px;transition:all .2s}
+.modal-tab.active{background:white;color:var(--blue-600);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.modal.course-modal{max-width:680px}
+.cm-header{background:linear-gradient(135deg,var(--blue-50),var(--pink-50));border-radius:14px;padding:1.5rem;margin-bottom:1.5rem;display:flex;gap:1rem;align-items:flex-start}
+.cm-header-icon{font-size:3.5rem;line-height:1}
+.cm-header h2{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:600;color:var(--gray-900);margin-bottom:.3rem}
+.cm-header p{font-size:.8rem;color:var(--gray-400)}
+.module-list{list-style:none;display:flex;flex-direction:column;gap:.4rem;margin:.8rem 0 1.5rem}
+.module-list li{display:flex;align-items:center;gap:.65rem;padding:.65rem .9rem;background:var(--bg);border-radius:10px;font-size:.83rem;color:var(--gray-700);border:1px solid var(--blue-100)}
+.module-list li .mod-icon{color:var(--blue-500);font-size:.9rem}
+.cm-price-bar{background:linear-gradient(135deg,var(--blue-50),var(--pink-50));border-radius:14px;padding:1.2rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;border:1.5px solid var(--blue-200)}
+.cm-price{font-family:'Fraunces',serif;font-size:2rem;font-weight:600;color:var(--gray-900)}
+.cm-price sub{font-size:.8rem;font-weight:400;color:var(--gray-400);font-family:'Plus Jakarta Sans',sans-serif}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:.75rem;font-weight:700;color:var(--gray-700);margin-bottom:.4rem;letter-spacing:.03em}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:.7rem .9rem;border:1.5px solid var(--blue-200);border-radius:10px;background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;font-size:.88rem;color:var(--gray-900);outline:none;transition:border .2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--blue-500);background:white}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+
+/* MÉTODO DE PAGO */
+.metodo-btn{display:flex;align-items:center;gap:.6rem;padding:.65rem .85rem;border-radius:10px;border:1.5px solid var(--blue-200);background:white;cursor:pointer;font-size:.83rem;font-weight:500;color:var(--gray-700);transition:all .2s}
+.metodo-btn:hover{border-color:var(--blue-400);background:var(--blue-50)}
+.metodo-btn.selected{border-color:var(--blue-600);background:var(--blue-50);color:var(--blue-700);font-weight:700}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(32px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* RESPONSIVE */
+@media(max-width:1024px){.instructor-wrap{grid-template-columns:1fr 1fr;gap:2.5rem}.footer-grid{grid-template-columns:1fr 1fr;gap:2rem}.tool-wrap{grid-template-columns:1fr}}
+@media(max-width:768px){.nav-links{display:none}.hamburger{display:flex}.hero-inner{grid-template-columns:1fr}.hero-visual{display:none}.hero{min-height:auto;padding-top:calc(64px + 2rem);padding-bottom:2rem}.instructor-wrap{grid-template-columns:1fr}.instr-photo{aspect-ratio:4/3}.instr-floating-card{bottom:-12px;right:8px}.footer-grid{grid-template-columns:1fr;gap:1.5rem}.footer-bottom{flex-direction:column;text-align:center}.form-row{grid-template-columns:1fr}.steps-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.steps-grid{grid-template-columns:1fr}.hero h1{font-size:2rem}.hero-actions{flex-direction:column}.btn-primary,.btn-ghost{width:100%;justify-content:center}.modal{padding:1.5rem;border-radius:16px}.cm-header{flex-direction:column}.cm-price-bar{flex-direction:column;align-items:flex-start}.launch-form{flex-direction:column}}
+svg{display:inline-block;vertical-align:middle}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-icon">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 3C8 3 5 6 5 9c0 2 1 3.5 2.5 4.5L7 20h10l-.5-6.5C18 12.5 19 11 19 9c0-3-3-6-7-6z" fill="white" opacity=".9"/><path d="M9 20v1a1 1 0 002 0v-1M13 20v1a1 1 0 002 0v-1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+    <span class="nav-logo-text">Crokan enseña <span>by Andrea V.</span></span>
+  </a>
+  <div class="nav-spacer"></div>
+  <ul class="nav-links">
+    <li><a href="#cursos">Cursos</a></li>
+    <li><a href="#herramienta">Herramienta</a></li>
+    <li><a href="#combos">Combos</a></li>
+    <li><a href="#instructora">Andrea V.</a></li>
+    <li><a href="#faq">Preguntas</a></li>
+    <li><a href="#" class="nav-btn" onclick="openModal('auth')">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke="white" stroke-width="2"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      Mi cuenta
+    </a></li>
+  </ul>
+  <button class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#cursos" onclick="toggleMenu()">🎓 Cursos</a>
+  <a href="#herramienta" onclick="toggleMenu()">🧮 Herramienta de costos</a>
+  <a href="#combos" onclick="toggleMenu()">⭐ Combos</a>
+  <a href="#instructora" onclick="toggleMenu()">👩‍🍳 Andrea V.</a>
+  <a href="#faq" onclick="toggleMenu()">❓ Preguntas frecuentes</a>
+  <a href="#" onclick="openModal('auth');toggleMenu()">🔐 Mi cuenta</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-inner">
+    <div style="animation:fadeUp .8s ease both">
+      <div class="hero-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/></svg>
+        Escuela de Repostería y Pastelería Online
+      </div>
+      <h1>Aprende a crear <em>postres</em> que conquistan</h1>
+      <p class="hero-desc">Cursos en video impartidos por Andrea V., repostera profesional venezolana. Técnicas reales, recetas probadas y una herramienta para que tu negocio sea rentable desde el primer día.</p>
+      <div class="hero-actions">
+        <a href="#cursos" class="btn-primary">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2" stroke="white" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="2" stroke="white" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="2" stroke="white" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="2" stroke="white" stroke-width="2"/></svg>
+          Ver cursos
+        </a>
+        <a href="#herramienta" class="btn-ghost">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" stroke-width="2"/><path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Ver herramienta
+        </a>
+      </div>
+      <div class="hero-trust">
+        <div class="hero-avatars">
+          <span>😊</span><span>🥰</span><span>😍</span><span>🎉</span>
+        </div>
+        <span>+1.200 reposteras ya confían en Crokan</span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hv-card"><div class="hv-thumb hv-c1">🎂</div><div class="hv-body"><strong>Tortas de diseño</strong><span>16 clases · 14h</span><br><span class="hv-pill pill-pink">Intermedio</span></div></div>
+      <div class="hv-card"><div class="hv-thumb hv-c2">🧁</div><div class="hv-body"><strong>Cupcakes & Cremas</strong><span>12 clases · 8h</span><br><span class="hv-pill pill-blue">Principiante</span></div></div>
+      <div class="hv-card"><div class="hv-thumb hv-c3">🍫</div><div class="hv-body"><strong>Bombonería artesanal</strong><span>14 clases · 9h</span><br><span class="hv-pill pill-purple">Intermedio</span></div></div>
+      <div class="hv-card"><div class="hv-thumb hv-c4">🧮</div><div class="hv-body"><strong>Calculadora de costos</strong><span>Herramienta incluida</span><br><span class="hv-pill pill-green">Negocio rentable</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num">+1.200</div><div class="stat-label">Reposteras activas</div></div>
+  <div class="stat"><div class="stat-num">12</div><div class="stat-label">Cursos disponibles</div></div>
+  <div class="stat"><div class="stat-num">98%</div><div class="stat-label">Satisfacción</div></div>
+  <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Acceso de por vida</div></div>
+</div>
+
+<!-- CURSOS -->
+<section class="section" id="cursos">
+  <div class="section-inner">
+    <div class="chip">
+      <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="2" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="2" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="2" stroke="currentColor" stroke-width="2"/></svg>
+      Catálogo completo
+    </div>
+    <h2 class="section-title">Nuestros <em>cursos</em></h2>
+    <p class="section-sub">Desde los fundamentos hasta la repostería de alto nivel. Cada curso incluye recetas descargables, acceso de por vida y certificado digital.</p>
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterCourses('all',this)">Todos</button>
+      <button class="filter-btn" onclick="filterCourses('principiante',this)">⭐ Principiante</button>
+      <button class="filter-btn" onclick="filterCourses('intermedio',this)">⭐⭐ Intermedio</button>
+      <button class="filter-btn" onclick="filterCourses('avanzado',this)">⭐⭐⭐ Avanzado</button>
+      <button class="filter-btn" onclick="filterCourses('decoracion',this)">🌸 Decoración</button>
+      <button class="filter-btn" onclick="filterCourses('chocolate',this)">🍫 Chocolate</button>
+
+    </div>
+    <!-- Cursos cargados dinámicamente desde Supabase -->
+    <div id="courses-loading" style="text-align:center;padding:3rem;color:var(--gray-400)">
+      <div style="font-size:1.5rem;margin-bottom:.5rem">⏳</div>
+      <p style="font-size:.88rem">Cargando cursos...</p>
+    </div>
+    <div class="courses-grid" id="coursesGrid" style="display:none"></div>
+    <div id="courses-empty" style="display:none;text-align:center;padding:3rem;color:var(--gray-400)">
+      <div style="font-size:2.5rem;margin-bottom:.75rem">🎂</div>
+      <p style="font-size:.95rem;font-weight:600;color:var(--gray-700);margin-bottom:.4rem">Cursos próximamente</p>
+      <p style="font-size:.85rem">Estamos preparando contenido increíble para ti.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HERRAMIENTA -->
+<section class="section" id="herramienta">
+  <div class="section-inner">
+    <div class="tool-wrap">
+      <div>
+        <div class="chip chip-pink">Herramienta exclusiva</div>
+        <h2 class="section-title">Calculadora de costos <em>Crokan</em></h2>
+        <p class="section-sub">La herramienta que toda repostera necesita para dejar de regalar su trabajo. Calcula el costo real de cada producto, define precios rentables y visualiza las ganancias de tu negocio.</p>
+        <div class="tool-features">
+          <div class="tool-feature"><div class="tool-feature-icon">🥚</div>Costo por gramo de cada ingrediente (4 decimales de precisión)</div>
+          <div class="tool-feature"><div class="tool-feature-icon">⏱</div>Calcula el valor de tu hora de trabajo y lo suma automáticamente</div>
+          <div class="tool-feature"><div class="tool-feature-icon">🧁</div>Recetas con autocompletado de ingredientes y costo por unidad</div>
+          <div class="tool-feature"><div class="tool-feature-icon">💰</div>Precio sugerido con margen de ganancia personalizable</div>
+          <div class="tool-feature"><div class="tool-feature-icon">⚖️</div>Punto de equilibrio: cuánto necesitas vender cada mes</div>
+          <div class="tool-feature"><div class="tool-feature-icon">🏆</div>Ranking de productos por rentabilidad y simulador de escenarios</div>
+        </div>
+        <div class="tool-price-box">
+          <div>
+            <div class="tool-price">$19<sub> USD</sub></div>
+            <div style="font-size:.75rem;color:var(--gray-400);margin-top:2px">Pago único · Acceso de por vida · Funciona en celular</div>
+          </div>
+          <button class="btn-enroll" style="padding:.75rem 1.5rem;font-size:.85rem" onclick="addToCartHerramienta()">Obtener herramienta →</button>
+        </div>
+      </div>
+      <div style="background:white;border-radius:20px;box-shadow:var(--shadow-lg);border:1.5px solid var(--blue-100);overflow:hidden">
+        <div style="background:linear-gradient(135deg,var(--blue-600),var(--pink-500));padding:1.5rem 1.75rem">
+          <div style="font-family:'Fraunces',serif;font-size:1.15rem;font-weight:600;color:white;margin-bottom:.3rem">¿Sabías que la mayoría de las reposteras trabaja a pérdida sin saberlo?</div>
+          <div style="font-size:.82rem;color:rgba(255,255,255,.8);line-height:1.6">La Calculadora Crokan te muestra exactamente cuánto te cuesta cada producto y cuánto deberías cobrar para ganar de verdad.</div>
+        </div>
+        <div style="padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:.85rem">
+          <div style="display:flex;align-items:flex-start;gap:.9rem">
+            <div style="width:38px;height:38px;border-radius:10px;background:var(--blue-50);border:1.5px solid var(--blue-100);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">🥚</div>
+            <div><div style="font-size:.88rem;font-weight:600;color:var(--gray-900);margin-bottom:2px">Deja de adivinar cuánto cuesta cada ingrediente</div><div style="font-size:.78rem;color:var(--gray-500);line-height:1.5">Registras lo que compraste y la herramienta calcula automáticamente el costo exacto por gramo, mililitro o unidad.</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.9rem">
+            <div style="width:38px;height:38px;border-radius:10px;background:var(--pink-50);border:1.5px solid var(--pink-100);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">⏱</div>
+            <div><div style="font-size:.88rem;font-weight:600;color:var(--gray-900);margin-bottom:2px">Tu tiempo tiene precio, y aquí se cobra</div><div style="font-size:.78rem;color:var(--gray-500);line-height:1.5">Defines cuánto quieres ganar al mes y la herramienta calcula tu valor hora. Ese costo se suma solo a cada receta.</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.9rem">
+            <div style="width:38px;height:38px;border-radius:10px;background:#ede9fe;border:1.5px solid #ddd6fe;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">🏷️</div>
+            <div><div style="font-size:.88rem;font-weight:600;color:var(--gray-900);margin-bottom:2px">El precio que deberías cobrar, calculado al instante</div><div style="font-size:.78rem;color:var(--gray-500);line-height:1.5">Eliges tu margen de ganancia y la herramienta te dice exactamente cuánto cobrar por cada producto. Sin suposiciones.</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:.9rem">
+            <div style="width:38px;height:38px;border-radius:10px;background:#d1fae5;border:1.5px solid #a7f3d0;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">📊</div>
+            <div><div style="font-size:.88rem;font-weight:600;color:var(--gray-900);margin-bottom:2px">Descubre cuánto necesitas vender para ser rentable</div><div style="font-size:.78rem;color:var(--gray-500);line-height:1.5">La sección de punto de equilibrio te dice el mínimo de ventas mensuales para cubrir tus gastos y empezar a ganar.</div></div>
+          </div>
+          <div style="background:var(--blue-50);border:1px solid var(--blue-100);border-radius:10px;padding:.85rem 1rem;font-size:.8rem;color:var(--blue-700);line-height:1.5">
+            <strong>Funciona desde tu celular,</strong> sin descargas ni instalaciones. Tus datos se guardan automáticamente.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMBOS — cargados dinámicamente desde Supabase, ocultos si no hay combos activos -->
+<section class="section" id="combos" style="display:none">
+  <div class="section-inner">
+    <div style="text-align:center">
+      <div class="chip" style="margin:0 auto 1rem">Mejor valor</div>
+      <h2 class="section-title">Paquetes <em>especiales</em></h2>
+      <p class="section-sub" style="margin:0 auto 2.5rem">Combina cursos y herramienta para aprender y hacer tu negocio rentable al mismo tiempo.</p>
+    </div>
+    <div class="combos-grid" id="combosGrid"></div>
+  </div>
+</section>
+
+<!-- INSTRUCTORA -->
+<section class="section" id="instructora">
+  <div class="section-inner">
+    <div class="instructor-wrap">
+      <div class="instr-photo-wrap">
+        <div class="instr-photo">👩‍🍳</div>
+        <div class="instr-floating-card">
+          <div class="big">8+</div>
+          <div class="lbl">Años de experiencia</div>
+        </div>
+      </div>
+      <div class="instr-info">
+        <div class="chip chip-pink">Tu instructora</div>
+        <h2 class="section-title">Andrea <em>V.</em></h2>
+        <p>Repostera profesional venezolana con más de ocho años creando postres y formando a otras apasionadas del dulce. Estudié técnicas avanzadas de repostería y he trabajado con clientes en todo el país, desde tortas de boda hasta líneas de producción casera.</p>
+        <p>Fundé Crokan enseña porque viví en carne propia lo que es trabajar duro sin ganar lo que mereces. Mis cursos no solo te enseñan técnica, también te dan las herramientas para que tu pastelería sea un negocio real y rentable.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">Tortas de diseño</span>
+          <span class="skill-tag">Repostería fría</span>
+          <span class="skill-tag">Chocolate artesanal</span>
+          <span class="skill-tag">Sugar art</span>
+          <span class="skill-tag">Costeo y precios</span>
+          <span class="skill-tag">Negocio pastelero</span>
+        </div>
+        <a href="#cursos" class="btn-primary">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2" stroke="white" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="2" stroke="white" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="2" stroke="white" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="2" stroke="white" stroke-width="2"/></svg>
+          Ver mis cursos
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="section" id="como-funciona" style="background:white">
+  <div class="section-inner">
+    <div style="text-align:center">
+      <div class="chip" style="margin:0 auto 1rem">El proceso</div>
+      <h2 class="section-title">¿Cómo <em>funciona</em>?</h2>
+      <p class="section-sub" style="margin:0 auto 2.5rem">Cuatro pasos sencillos para comenzar tu camino en la repostería profesional.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-icon-wrap si-blue">
+          <svg width="26" height="26" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke="white" stroke-width="2"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="step-num">Paso 01</div>
+        <h3>Crea tu cuenta</h3>
+        <p>Regístrate con tu correo. En segundos tienes acceso a tu biblioteca personal con todo lo que adquieras.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon-wrap si-pink">
+          <svg width="26" height="26" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="white" stroke-width="2"/><path d="M16.5 16.5l4 4" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="step-num">Paso 02</div>
+        <h3>Elige tu curso o paquete</h3>
+        <p>Revisa el catálogo por nivel o categoría y lee el programa completo antes de decidir.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon-wrap si-purple">
+          <svg width="26" height="26" fill="none" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2" stroke="white" stroke-width="2"/><path d="M3 10h18M8 3v3M16 3v3" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="step-num">Paso 03</div>
+        <h3>Realiza tu pago</h3>
+        <p>Acepta transferencias, Zinli, Binance Pay, pago móvil y más. Una vez confirmado, recibes tu acceso de inmediato.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon-wrap si-green">
+          <svg width="26" height="26" fill="none" viewBox="0 0 24 24"><path d="M12 3C8 3 5 6 5 9c0 2 1 3.5 2.5 4.5L7 20h10l-.5-6.5C18 12.5 19 11 19 9c0-3-3-6-7-6z" stroke="white" stroke-width="2"/></svg>
+        </div>
+        <div class="step-num">Paso 04</div>
+        <h3>Aprende y haz crecer tu negocio</h3>
+        <p>Sigue los videos, descarga recetas, usa la calculadora y empieza a cobrar lo que realmente vales.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIOS -->
+<section class="section" id="testimonios">
+  <div class="section-inner">
+    <div class="chip">
+      <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/></svg>
+      Testimonios
+    </div>
+    <h2 class="section-title">Lo que dicen nuestras <em>alumnas</em></h2>
+    <p class="section-sub">Reposteras venezolanas que transformaron su pasión en un negocio rentable.</p>
+    <div class="testimonials-grid">
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <p class="testi-text">"Con la herramienta de costos por fin entendí por qué no me quedaba nada al final del mes. Subí mis precios con argumentos reales y mis clientas lo entendieron. ¡Ahora sí gano dinero!"</p>
+        <div class="testi-author"><div class="testi-avatar">🌸</div><div><div class="testi-name">Mariangel Rodríguez</div><div class="testi-course">Calculadora Crokan + Curso de precios</div></div></div>
+      </div>
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <p class="testi-text">"El curso de tortas de diseño fue exactamente lo que necesitaba. Andrea explica todo con mucha paciencia y el material es clarísimo. Ya estoy recibiendo pedidos de tortas de quince años."</p>
+        <div class="testi-author"><div class="testi-avatar">🎂</div><div><div class="testi-name">Valeria Castillo</div><div class="testi-course">Tortas de diseño y decoración</div></div></div>
+      </div>
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <p class="testi-text">"Nunca pensé que podría hacer bombones artesanales desde casa. Los videos son muy detallados, las recetas funcionan al primer intento. ¡Ya los vendo por encargo todas las semanas!"</p>
+        <div class="testi-author"><div class="testi-avatar">🍫</div><div><div class="testi-name">Daniela Márquez</div><div class="testi-course">Bombonería artesanal</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+  <div class="section-inner">
+    <div class="chip">Preguntas frecuentes</div>
+    <h2 class="section-title">Todo lo que necesitas <em>saber</em></h2>
+    <p class="section-sub">Respondemos tus dudas antes de que las tengas.</p>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">¿Cómo realizo el pago desde Venezuela?<span class="faq-icon">+</span></div>
+        <div class="faq-answer">Aceptamos Zinli, Binance Pay, pago móvil, transferencias a Davivienda y Bancolombia. Una vez que realizas el pago, nos envías el comprobante y en menos de 24 horas activamos tu acceso manualmente. Te llega un correo de confirmación.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">¿Por cuánto tiempo tengo acceso a los cursos?<span class="faq-icon">+</span></div>
+        <div class="faq-answer">El acceso es de por vida. Una vez que adquieres un curso o la herramienta, es tuyo para siempre. También recibes cualquier actualización de contenido sin costo adicional.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">¿Puedo ver los cursos desde el celular?<span class="faq-icon">+</span></div>
+        <div class="faq-answer">Sí. La plataforma y la herramienta de costos están optimizadas para celular. Puedes ver los videos, usar la calculadora y acceder a todo tu contenido desde cualquier dispositivo con internet.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">¿La herramienta de costos requiere instalar algo?<span class="faq-icon">+</span></div>
+        <div class="faq-answer">No. La herramienta funciona directamente en tu navegador, sin descargas ni instalaciones. Tus datos se guardan automáticamente en tu dispositivo.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">¿Qué nivel de experiencia necesito para empezar?<span class="faq-icon">+</span></div>
+        <div class="faq-answer">Tenemos cursos para todos los niveles. Si eres principiante, empieza por Cupcakes & Buttercream desde cero. Si ya tienes experiencia, puedes ir directamente a cursos intermedios o avanzados.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">¿Puedo hablar directamente con Andrea V.?<span class="faq-icon">+</span></div>
+        <div class="faq-answer">Sí. Todos los cursos incluyen al menos una sesión en vivo de preguntas y respuestas con Andrea. Los paquetes superiores incluyen más sesiones y soporte directo por WhatsApp.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BANNER LISTA DE ESPERA -->
+<div class="launch-banner">
+  <div class="launch-inner">
+    <div class="launch-tag">🔔 Próximo lanzamiento</div>
+    <h2>¿Quieres ser de las <em style="font-style:italic;color:#f472b6">primeras</em> en enterarte?</h2>
+    <p>Deja tu correo y te avisamos cuando abramos nuevos grupos, lancemos cursos nuevos o tengamos promociones especiales. Sin spam, solo lo importante.</p>
+    <div class="launch-form">
+      <input type="email" class="launch-input" placeholder="tu@correo.com" id="waitlist-email">
+      <button class="btn-launch" onclick="handleWaitlist()">Avisame →</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-brand-logo">
+        <div class="footer-brand-icon">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 3C8 3 5 6 5 9c0 2 1 3.5 2.5 4.5L7 20h10l-.5-6.5C18 12.5 19 11 19 9c0-3-3-6-7-6z" fill="white" opacity=".9"/></svg>
+        </div>
+        <span class="footer-brand-name">Crokan enseña <span>by Andrea V.</span></span>
+      </div>
+      <p>La escuela de repostería y pastelería donde aprendes técnica y haces rentable tu negocio. Hecho con amor desde Venezuela para el mundo.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Aprender</h4>
+      <ul>
+        <li><a href="#cursos">Cursos principiante</a></li>
+        <li><a href="#cursos">Cursos intermedio</a></li>
+        <li><a href="#cursos">Cursos avanzado</a></li>
+        <li><a href="#combos">Paquetes especiales</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Herramientas</h4>
+      <ul>
+        <li><a href="#herramienta">Calculadora de costos</a></li>
+        <li><a href="#como-funciona">Cómo funciona</a></li>
+        <li><a href="#faq">Preguntas frecuentes</a></li>
+        <li><a href="#instructora">Sobre Andrea V.</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Ayuda</h4>
+      <ul>
+        <li><a href="#">Métodos de pago</a></li>
+        <li><a href="#">Contacto</a></li>
+        <li><a href="#">Términos de uso</a></li>
+        <li><a href="#">Política de privacidad</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Crokan enseña by Andrea V. Todos los derechos reservados.</span>
+    <span>Hecho con 🍰 y mucho amor desde Venezuela</span>
+  </div>
+</footer>
+
+<!-- CART FAB -->
+<button class="cart-fab" onclick="openModal('cart')">
+  <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div class="cart-badge" id="cartBadge">0</div>
+</button>
+
+<!-- MODAL AUTH -->
+<div class="modal-overlay" id="modal-auth">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('auth')">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="modal-icon">🍰</div>
+    <h2 class="modal-title">Bienvenida</h2>
+    <p class="modal-sub">Accede a tus cursos o únete a Crokan enseña</p>
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchTab('login',event)">Iniciar sesión</button>
+      <button class="modal-tab" onclick="switchTab('register',event)">Registrarse</button>
+    </div>
+    <div class="tab-panel active" id="tab-login">
+      <div id="login-error" style="display:none;background:#FEECEC;border:1px solid #F09595;border-radius:10px;padding:.75rem 1rem;font-size:.82rem;color:#A32D2D;margin-bottom:1rem"></div>
+      <div class="form-group"><label>Correo electrónico</label><input id="login-email" type="email" placeholder="tu@correo.com"></div>
+      <div class="form-group"><label>Contraseña</label><input id="login-password" type="password" placeholder="••••••••"></div>
+      <button class="btn-primary" id="login-btn" style="width:100%;justify-content:center;margin-bottom:1rem" onclick="handleLogin()">Entrar a mis cursos</button>
+      <p style="text-align:center;font-size:.8rem;color:var(--gray-400)"><a href="#" onclick="handleForgotPassword(event)" style="color:var(--blue-500)">¿Olvidaste tu contraseña?</a></p>
+    </div>
+    <div class="tab-panel" id="tab-register">
+      <div id="register-error" style="display:none;background:#FEECEC;border:1px solid #F09595;border-radius:10px;padding:.75rem 1rem;font-size:.82rem;color:#A32D2D;margin-bottom:1rem"></div>
+      <div id="register-success" style="display:none;background:#EAF3DE;border:1px solid #97C459;border-radius:10px;padding:.75rem 1rem;font-size:.82rem;color:#27500A;margin-bottom:1rem"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Nombre</label><input id="register-nombre" type="text" placeholder="María"></div>
+        <div class="form-group"><label>Apellido</label><input id="register-apellido" type="text" placeholder="González"></div>
+      </div>
+      <div class="form-group"><label>Correo electrónico</label><input id="register-email" type="email" placeholder="tu@correo.com"></div>
+      <div class="form-group"><label>Contraseña</label><input id="register-password" type="password" placeholder="Mínimo 8 caracteres"></div>
+      <button class="btn-primary" id="register-btn" style="width:100%;justify-content:center" onclick="handleRegister()">Crear mi cuenta</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CART -->
+<div class="modal-overlay" id="modal-cart">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('cart')">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="modal-icon">🛍️</div>
+    <h2 class="modal-title">Tu carrito</h2>
+    <p class="modal-sub">Revisa tus productos y elige cómo pagar</p>
+    <div id="cartItems"></div>
+    <div id="cartTotal" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;background:var(--blue-50);border:1.5px solid var(--blue-200);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1rem">
+        <span style="font-weight:700;color:var(--gray-700)">Total</span>
+        <span style="font-family:'Fraunces',serif;font-size:1.4rem;font-weight:600;color:var(--blue-600)" id="totalAmount">$0</span>
+      </div>
+
+      <!-- MÉTODO DE PAGO -->
+      <div style="margin-bottom:1rem">
+        <div style="font-size:.75rem;font-weight:700;color:var(--gray-700);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.6rem">Método de pago</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem" id="metodos-grid">
+          <div class="metodo-btn" onclick="selectMetodo(this,'zinli')" data-metodo="zinli">
+            <span style="font-size:1.2rem">💳</span><span>Zinli</span>
+          </div>
+          <div class="metodo-btn" onclick="selectMetodo(this,'binance')" data-metodo="binance">
+            <span style="font-size:1.2rem">🟡</span><span>Binance Pay</span>
+          </div>
+          <div class="metodo-btn" onclick="selectMetodo(this,'pago_movil')" data-metodo="pago_movil">
+            <span style="font-size:1.2rem">📱</span><span>Pago Móvil</span>
+          </div>
+          <div class="metodo-btn" onclick="selectMetodo(this,'davivienda')" data-metodo="davivienda">
+            <span style="font-size:1.2rem">🏦</span><span>Davivienda</span>
+          </div>
+          <div class="metodo-btn" onclick="selectMetodo(this,'bancolombia')" data-metodo="bancolombia">
+            <span style="font-size:1.2rem">🏦</span><span>Bancolombia</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- INSTRUCCIONES DEL MÉTODO -->
+      <div id="instrucciones-metodo" style="display:none;background:var(--blue-50);border:1px solid var(--blue-200);border-radius:10px;padding:.85rem 1rem;font-size:.82rem;color:var(--blue-700);line-height:1.7;margin-bottom:1rem"></div>
+
+      <button class="btn-primary" style="width:100%;justify-content:center" id="btn-checkout" onclick="handleCheckout()" disabled style="opacity:.5">
+        Confirmar pedido →
+      </button>
+      <p style="text-align:center;font-size:.75rem;color:var(--gray-400);margin-top:.6rem">Selecciona un método de pago para continuar</p>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL COURSE DETAIL -->
+<div class="modal-overlay" id="modal-course">
+  <div class="modal course-modal">
+    <button class="modal-close" onclick="closeModal('course')">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div id="courseDetailContent"></div>
+  </div>
+</div>
+
+<script>
+function toggleMenu(){document.getElementById('mobileMenu').classList.toggle('open')}
+function openModal(id){document.getElementById('modal-'+id).classList.add('active');document.body.style.overflow='hidden'}
+function closeModal(id){document.getElementById('modal-'+id).classList.remove('active');document.body.style.overflow=''}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o){o.classList.remove('active');document.body.style.overflow=''}}));
+function switchTab(tab,e){
+  document.querySelectorAll('.modal-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  if(e)e.target.classList.add('active');
+}
+function filterCourses(cat,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.course-card').forEach(card=>{
+    const show=cat==='all'||card.dataset.cat.includes(cat);
+    card.style.display=show?'':'none';
+    if(show)card.style.animation='fadeUp .4s ease both';
+  });
+}
+function toggleFaq(el){
+  const item=el.parentElement;
+  const wasOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+  if(!wasOpen)item.classList.add('open');
+}
+// ── HERRAMIENTA: buscar por tipo ──
+function addToCartHerramienta(){
+  const h = sbProducts.find(p=>p.tipo==='herramienta' && p.activo!==false);
+  if(!h){ alert('La herramienta no está disponible aún. Vuelve pronto.'); return; }
+  addToCartSB(h.id);
+}
+
+// ── MÉTODO DE PAGO ──
+let metodoSeleccionado = '';
+const instruccionesPago = {
+  zinli:      '💳 <strong>Zinli:</strong> Envía el pago a <strong>alvarez261093@gmail.com</strong>. Guarda el comprobante para subirlo en tu panel.',
+  binance:    '🟡 <strong>Binance Pay:</strong> ID de Binance: <strong>MiBinance</strong>. Guarda el ID de transacción.',
+  pago_movil: '📱 <strong>Pago Móvil:</strong> 0102 Venezuela · Cédula <strong>V-23.577.295</strong> · Teléfono <strong>0426-6523166</strong>.',
+  davivienda: '🏦 <strong>Davivienda:</strong> Cuenta ahorros <strong>0033-0000-0000-0000</strong> — Andrea V.',
+  bancolombia:'🏦 <strong>Bancolombia:</strong> Cuenta ahorros <strong>72691715141</strong> — Pastor Alvarez',
+};
+function selectMetodo(el, metodo){
+  document.querySelectorAll('.metodo-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  metodoSeleccionado = metodo;
+  const box = document.getElementById('instrucciones-metodo');
+  box.innerHTML = instruccionesPago[metodo] || '';
+  box.style.display = 'block';
+  const btn = document.getElementById('btn-checkout');
+  btn.disabled = false;
+  btn.style.opacity = '1';
+  btn.nextElementSibling.style.display = 'none';
+}
+let sbProducts=[];
+
+async function loadProductosFromSB(){
+  if(!window._sb) return;
+  const { data } = await window._sb.from('productos').select('*').eq('activo',true).order('precio');
+  sbProducts = data||[];
+
+  // ── Cursos ──
+  const cursos = sbProducts.filter(p=>p.tipo==='curso');
+  const grid = document.getElementById('coursesGrid');
+  document.getElementById('courses-loading').style.display='none';
+  if(!cursos.length){
+    document.getElementById('courses-empty').style.display='block';
+  } else {
+    grid.style.display='';
+    grid.innerHTML = cursos.map((p,i)=>{
+      const bg = thumbColors[i%thumbColors.length];
+      const bgStyle = bg.startsWith('hv-') ? '' : `style="background:${bg}"`;
+      const bgClass = bg.startsWith('hv-') ? bg : '';
+      return `<div class="course-card" data-cat="${p.tipo}" onclick="openProductDetail('${p.id}')">
+        <div class="course-thumb ${bgClass}" ${bgStyle}>${p.icono||'🎂'}</div>
+        <div class="course-body">
+          <div class="course-level">${p.tipo==='curso'?'Curso':'Herramienta'}</div>
+          <h3 class="course-title">${p.nombre}</h3>
+          <p class="course-desc">${p.descripcion||''}</p>
+          <div class="course-footer">
+            <div class="course-price">$${parseFloat(p.precio).toFixed(0)}<sub> USD</sub></div>
+            <button class="btn-enroll">Ver detalle →</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    // Reiniciar animaciones
+    document.querySelectorAll('.course-card').forEach(el=>{
+      el.style.opacity='0';el.style.transform='translateY(20px)';
+      el.style.transition='opacity .5s ease, transform .5s ease';
+      io.observe(el);
+    });
+  }
+
+  // ── Combos: cargar dinámicamente ──
+  const combos = sbProducts.filter(p=>p.tipo==='combo');
+  const combosSection = document.getElementById('combos');
+  const combosGrid = document.getElementById('combosGrid');
+  if(combos.length){
+    combosSection.style.display='';
+    combosGrid.innerHTML = combos.map(p=>`
+      <div class="combo-card">
+        <div class="combo-icon">${p.icono||'⭐'}</div>
+        <div class="combo-name">${p.nombre}</div>
+        <div class="combo-desc">${p.descripcion||''}</div>
+        <div class="combo-price-row">
+          <div class="combo-price">$${parseFloat(p.precio).toFixed(0)}<span style="font-size:.9rem;font-weight:400;color:var(--gray-400)"> USD</span></div>
+        </div>
+        <button class="btn-primary" style="width:100%;justify-content:center" onclick="addToCartSB('${p.id}')">Obtener paquete</button>
+      </div>`).join('');
+    document.querySelectorAll('.combo-card').forEach(el=>{
+      el.style.opacity='0';el.style.transform='translateY(20px)';
+      el.style.transition='opacity .5s ease, transform .5s ease';
+      io.observe(el);
+    });
+  } else {
+    combosSection.style.display='none';
+  }
+
+  // ── Quitar Combos y Herramienta del nav si no aplica ──
+  const navCombos = document.querySelectorAll('a[href="#combos"]');
+  navCombos.forEach(a=>{ if(!combos.length) a.style.display='none'; });
+}
+
+function openProductDetail(id){
+  const p = sbProducts.find(p=>p.id===id);
+  if(!p) return;
+  document.getElementById('courseDetailContent').innerHTML=`
+    <div class="cm-header">
+      <div class="cm-header-icon">${p.icono||'🎂'}</div>
+      <div>
+        <h2>${p.nombre}</h2>
+        <p>Acceso de por vida · Certificado digital · Material descargable</p>
+      </div>
+    </div>
+    <p style="font-size:.88rem;color:var(--gray-500);line-height:1.7;margin-bottom:1.25rem">${p.descripcion||''}</p>
+    <div class="cm-price-bar">
+      <div>
+        <div class="cm-price">$${parseFloat(p.precio).toFixed(2)}<sub> USD</sub></div>
+        <div style="font-size:.75rem;color:var(--gray-400);margin-top:2px">Pago único · Acceso de por vida</div>
+      </div>
+      <button class="btn-enroll" style="padding:.7rem 1.5rem;font-size:.85rem"
+        onclick="addToCartSB('${p.id}');closeModal('course')">
+        Agregar al carrito
+      </button>
+    </div>`;
+  openModal('course');
+}
+
+// ── CARRITO conectado a Supabase ──
+let cart=[];
+function addToCartSB(id){
+  const p = sbProducts.find(p=>p.id===id);
+  if(!p) return;
+  if(!cart.find(i=>i.id===id)){
+    cart.push({id:p.id, title:p.nombre, price:parseFloat(p.precio), icon:p.icono||'📦'});
+    updateCartUI();
+  }
+  openModal('cart');
+}
+function addToCart(id){ addToCartSB(id); } // compatibilidad con combos
+
+function removeFromCart(id){cart=cart.filter(i=>i.id!==id);updateCartUI();}
+function updateCartUI(){
+  document.getElementById('cartBadge').textContent=cart.length;
+  const items=document.getElementById('cartItems');
+  const total=document.getElementById('cartTotal');
+  if(!cart.length){
+    items.innerHTML='<div style="text-align:center;padding:2rem;color:var(--gray-400)"><div style="font-size:2.5rem;margin-bottom:.5rem">🛍️</div><p style="font-size:.88rem">Tu carrito está vacío</p></div>';
+    total.style.display='none';
+  } else {
+    items.innerHTML='<div style="margin-bottom:1rem">'+cart.map(c=>`
+      <div style="display:flex;align-items:center;gap:.75rem;padding:.75rem;background:var(--bg);border-radius:10px;margin-bottom:.5rem;border:1px solid var(--blue-100)">
+        <span style="font-size:1.8rem;width:40px;text-align:center">${c.icon}</span>
+        <div style="flex:1;min-width:0"><div style="font-size:.85rem;font-weight:600;color:var(--gray-900)">${c.title}</div></div>
+        <div style="font-family:'Fraunces',serif;font-size:1rem;font-weight:600;color:var(--blue-600);white-space:nowrap">$${c.price.toFixed(2)} USD</div>
+        <button onclick="removeFromCart('${c.id}')" style="background:none;border:none;cursor:pointer;color:var(--gray-400);padding:4px;border-radius:6px">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>`).join('')+'</div>';
+    document.getElementById('totalAmount').textContent='$'+cart.reduce((a,c)=>a+c.price,0).toFixed(2)+' USD';
+    total.style.display='block';
+  }
+}
+updateCartUI();
+
+async function handleCheckout(){
+  if(!cart.length){ alert('Tu carrito está vacío.'); return; }
+  if(!metodoSeleccionado){ alert('Selecciona un método de pago.'); return; }
+  if(!window._sb){ openModal('auth'); return; }
+  const { data:{ session } } = await window._sb.auth.getSession();
+  if(!session){ closeModal('cart'); openModal('auth'); return; }
+
+  const btn = document.getElementById('btn-checkout');
+  btn.disabled=true; btn.textContent='Enviando pedido...';
+
+  const total = cart.reduce((a,c)=>a+c.price,0);
+  const { data: pedido, error } = await window._sb.from('pedidos').insert([{
+    user_id: session.user.id,
+    total,
+    estado: 'pendiente',
+    metodo_pago: metodoSeleccionado
+  }]).select().single();
+
+  if(error){
+    btn.disabled=false; btn.textContent='Confirmar pedido →';
+    alert('Error al crear el pedido. Intenta de nuevo.');
+    return;
+  }
+
+  const items = cart.map(c=>({ pedido_id:pedido.id, producto_id:c.id, precio:c.price }));
+  await window._sb.from('pedido_items').insert(items);
+
+  // Reset
+  cart=[]; metodoSeleccionado='';
+  document.querySelectorAll('.metodo-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('instrucciones-metodo').style.display='none';
+  btn.disabled=false; btn.textContent='Confirmar pedido →';
+  btn.style.opacity='.5';
+  updateCartUI();
+  closeModal('cart');
+
+  setTimeout(()=>{
+    alert(`¡Pedido enviado! 🎉\n\nTu pedido está pendiente de confirmación.\n\nEntra a "Mi cuenta" → "Mi escuela" para subir el comprobante de pago. Una vez lo confirme Andrea V., recibirás acceso inmediato.`);
+  },200);
+}
+
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)'}});
+},{threshold:.08});
+document.querySelectorAll('.course-card,.step-card,.testi-card,.combo-card').forEach(el=>{
+  el.style.opacity='0';el.style.transform='translateY(20px)';
+  el.style.transition='opacity .5s ease, transform .5s ease';
+  io.observe(el);
+});
+</script>
+
+<!-- SUPABASE AUTH -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://gjtucszugkbyuxemtmxj.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_pF3-mN98CnjTPvzHXXLANQ_2VHWX2vm';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+window._sb = sb;
+
+// ── HELPERS UI ──
+function setLoading(btnId, loading, defaultText){
+  const btn = document.getElementById(btnId);
+  if(!btn) return;
+  btn.disabled = loading;
+  btn.textContent = loading ? 'Un momento...' : defaultText;
+  btn.style.opacity = loading ? '.7' : '1';
+}
+function showError(elId, msg){
+  const el = document.getElementById(elId);
+  if(!el) return;
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
+}
+function showSuccess(elId, msg){
+  const el = document.getElementById(elId);
+  if(!el) return;
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
+}
+
+// ── NAVBAR según sesión ──
+function updateNavForSession(user){
+  const navBtn = document.querySelector('.nav-btn');
+  if(!navBtn) return;
+  if(user){
+    const nombre = user.user_metadata?.nombre || user.email.split('@')[0];
+    navBtn.innerHTML = `
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke="white" stroke-width="2"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      ${nombre}`;
+    navBtn.onclick = () => openUserMenu();
+  } else {
+    navBtn.innerHTML = `
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke="white" stroke-width="2"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      Mi cuenta`;
+    navBtn.onclick = () => openModal('auth');
+  }
+}
+
+function openUserMenu(){
+  if(confirm('¿Deseas cerrar sesión?')) handleLogout();
+}
+
+// ── LOGIN ──
+async function handleLogin(){
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  showError('login-error', '');
+  if(!email || !password){ showError('login-error','Completa todos los campos.'); return; }
+  setLoading('login-btn', true, 'Entrar a mis cursos');
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  setLoading('login-btn', false, 'Entrar a mis cursos');
+  if(error){
+    const msg = error.message.includes('Invalid') ? 'Correo o contraseña incorrectos.' : error.message;
+    showError('login-error', msg);
+    return;
+  }
+  closeModal('auth');
+  updateNavForSession(data.user);
+  mostrarBienvenida(data.user);
+}
+
+// ── REGISTRO ──
+async function handleRegister(){
+  const nombre   = document.getElementById('register-nombre').value.trim();
+  const apellido = document.getElementById('register-apellido').value.trim();
+  const email    = document.getElementById('register-email').value.trim();
+  const password = document.getElementById('register-password').value;
+  showError('register-error','');
+  showSuccess('register-success','');
+  if(!nombre || !email || !password){ showError('register-error','Completa todos los campos obligatorios.'); return; }
+  if(password.length < 8){ showError('register-error','La contraseña debe tener al menos 8 caracteres.'); return; }
+  setLoading('register-btn', true, 'Crear mi cuenta');
+  const { data, error } = await sb.auth.signUp({
+    email, password,
+    options: { data: { nombre, apellido, nombre_completo: `${nombre} ${apellido}`.trim() } }
+  });
+  setLoading('register-btn', false, 'Crear mi cuenta');
+  if(error){
+    const msg = error.message.includes('already') ? 'Este correo ya tiene una cuenta. Inicia sesión.' : error.message;
+    showError('register-error', msg);
+    return;
+  }
+  showSuccess('register-success', `¡Listo, ${nombre}! Revisa tu correo para confirmar tu cuenta. Luego podrás iniciar sesión.`);
+  document.getElementById('register-email').value = '';
+  document.getElementById('register-password').value = '';
+}
+
+// ── OLVIDÉ CONTRASEÑA ──
+async function handleForgotPassword(e){
+  e.preventDefault();
+  const email = document.getElementById('login-email').value.trim();
+  if(!email){ showError('login-error','Escribe tu correo arriba y luego haz clic aquí.'); return; }
+  showError('login-error','');
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.href
+  });
+  if(error){ showError('login-error', error.message); return; }
+  showError('login-error','');
+  alert(`Te enviamos un enlace para restablecer tu contraseña a ${email}. Revisa tu bandeja de entrada.`);
+}
+
+// ── LOGOUT ──
+async function handleLogout(){
+  await sb.auth.signOut();
+  updateNavForSession(null);
+}
+
+// ── BIENVENIDA ──
+function mostrarBienvenida(user){
+  const nombre = user.user_metadata?.nombre || user.email.split('@')[0];
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#0f172a;color:white;padding:12px 24px;border-radius:30px;font-size:14px;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:fadeUp .3s ease';
+  toast.textContent = `¡Bienvenida, ${nombre}! 🍰`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// ── LISTA DE ESPERA con Supabase ──
+async function handleWaitlist(){
+  const email = document.getElementById('waitlist-email').value.trim();
+  if(!email){ alert('Ingresa tu correo.'); return; }
+  const { error } = await sb.from('waitlist').insert([{ email }]);
+  document.getElementById('waitlist-email').value = '';
+  if(error && error.code === '23505'){
+    alert('¡Ya estás en la lista! Te avisamos pronto. 🎉');
+  } else {
+    alert('¡Listo! Te avisamos cuando haya novedades. 🎂');
+  }
+}
+
+// ── SESIÓN ACTIVA al cargar ──
+sb.auth.getSession().then(({ data: { session } }) => {
+  if(session) updateNavForSession(session.user);
+  loadProductosFromSB();
+});
+
+// ── LISTA DE ESPERA con Supabase ──
+async function handleWaitlist(){
+  const email = document.getElementById('waitlist-email').value.trim();
+  if(!email){ alert('Ingresa tu correo.'); return; }
+  const { error } = await sb.from('waitlist').insert([{ email }]);
+  document.getElementById('waitlist-email').value = '';
+  if(error && error.code === '23505'){
+    alert('¡Ya estás en la lista! Te avisamos pronto. 🎉');
+  } else {
+    alert('¡Listo! Te avisamos cuando haya novedades. 🎂');
+  }
+}
+
+// ── ESCUCHAR CAMBIOS de sesión ──
+sb.auth.onAuthStateChange((_event, session) => {
+  updateNavForSession(session?.user || null);
+});
+</script>
+</body>
+</html>

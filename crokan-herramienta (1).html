@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crokan enseña — Calculadora de Costos</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--rose:#F2A8BC;--rose-d:#D4748F;--rose-l:#FCF0F4;--rose-m:#F7D5E0;--mint:#A8D8B9;--mint-l:#EAF7EE;--mint-d:#5BA876;--lav:#C9B8F0;--lav-l:#F0EBFD;--lav-d:#7B63C9;--peach:#F5C4A0;--peach-l:#FEF3EB;--peach-d:#C07840;--cream:#FDF8F5;--brown:#3D2314;--brown-m:#7A4528;--gray:#6B6B6B;--gray-l:#F5F3F1;--white:#FFFFFF;--shadow:0 2px 20px rgba(61,35,20,0.08);--shadow-md:0 4px 32px rgba(61,35,20,0.12);--r-sm:12px;--r-md:18px;--r-lg:26px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--brown);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse 600px 400px at 10% 20%,rgba(242,168,188,0.18) 0%,transparent 70%),radial-gradient(ellipse 500px 500px at 90% 80%,rgba(201,184,240,0.15) 0%,transparent 70%),radial-gradient(ellipse 400px 300px at 50% 50%,rgba(168,216,185,0.10) 0%,transparent 70%);pointer-events:none;z-index:0}
+.app-shell{position:relative;z-index:1;max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(242,168,188,0.3);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--lav));display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 12px rgba(242,168,188,0.5)}
+.brand-name{font-family:'Playfair Display',serif;font-size:16px;color:var(--brown);line-height:1.1}
+.brand-by{font-size:10px;color:var(--rose-d);font-weight:300;letter-spacing:.5px}
+.save-btn{background:var(--rose-l);border:1px solid var(--rose);color:var(--rose-d);border-radius:20px;padding:6px 14px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;font-weight:500}
+.save-btn:hover{background:var(--rose);color:white}
+.nav-wrap{padding:12px 16px 0;background:rgba(255,255,255,0.6);backdrop-filter:blur(10px);border-bottom:1px solid rgba(242,168,188,0.2);position:sticky;top:67px;z-index:99}
+.nav-pills{display:flex;gap:6px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none}
+.nav-pills::-webkit-scrollbar{display:none}
+.pill{flex-shrink:0;padding:7px 16px;border-radius:30px;border:1px solid rgba(242,168,188,0.4);background:transparent;color:var(--brown-m);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap;font-weight:400}
+.pill.active{background:var(--brown);color:white;border-color:var(--brown);font-weight:500}
+.pill:hover:not(.active){background:var(--rose-l);border-color:var(--rose)}
+.content{flex:1;padding:20px 16px 100px}
+.panel{display:none;animation:fadeUp .3s ease}
+.panel.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.section-intro{margin-bottom:20px}
+.section-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--brown);margin-bottom:4px}
+.section-sub{font-size:13px;color:var(--gray);line-height:1.5}
+.card{background:var(--white);border-radius:var(--r-lg);border:1px solid rgba(242,168,188,0.25);box-shadow:var(--shadow);padding:18px;margin-bottom:14px;transition:box-shadow .2s}
+.card:hover{box-shadow:var(--shadow-md)}
+.card-title{font-family:'Playfair Display',serif;font-size:14px;color:var(--brown);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-title-icon{width:28px;height:28px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.field{margin-bottom:13px}
+.field:last-child{margin-bottom:0}
+.field-label{font-size:11px;font-weight:500;color:var(--rose-d);letter-spacing:.4px;text-transform:uppercase;margin-bottom:5px;display:block}
+.field-input{width:100%;padding:11px 14px;border-radius:var(--r-sm);border:1.5px solid rgba(242,168,188,0.35);background:var(--rose-l);color:var(--brown);font-size:14px;font-family:'DM Sans',sans-serif;transition:all .2s;outline:none}
+.field-input:focus{border-color:var(--rose-d);background:white;box-shadow:0 0 0 3px rgba(242,168,188,0.2)}
+.field-input::placeholder{color:rgba(122,69,40,0.35)}
+.field-auto{width:100%;padding:11px 14px;border-radius:var(--r-sm);border:1.5px solid rgba(168,216,185,0.5);background:var(--mint-l);color:var(--mint-d);font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif}
+.field-result{width:100%;padding:13px 14px;border-radius:var(--r-sm);border:1.5px solid rgba(201,184,240,0.5);background:var(--lav-l);color:var(--lav-d);font-size:18px;font-weight:500;font-family:'Playfair Display',serif}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+select.field-input{cursor:pointer}
+.tip{background:linear-gradient(135deg,#FFFBF0,#FFF8E8);border:1px solid rgba(245,196,160,0.5);border-left:3px solid var(--peach);border-radius:var(--r-sm);padding:11px 14px;font-size:12px;color:var(--peach-d);line-height:1.6;margin-bottom:14px}
+.btn{width:100%;padding:14px;border-radius:var(--r-md);background:linear-gradient(135deg,var(--rose),var(--rose-d));border:none;color:white;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(212,116,143,0.35);margin-top:4px}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(212,116,143,0.45)}
+.btn:active{transform:translateY(0)}
+.btn-mint{background:linear-gradient(135deg,var(--mint),var(--mint-d));box-shadow:0 4px 16px rgba(91,168,118,0.3)}
+.btn-sm{width:auto;padding:8px 18px;font-size:13px;border-radius:20px}
+.btn-ghost{background:transparent;color:var(--rose-d);border:1.5px solid var(--rose);box-shadow:none}
+.btn-ghost:hover{background:var(--rose-l)}
+.btn-row{display:flex;gap:8px;margin-top:8px}
+.btn-row .btn{margin-top:0}
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(242,168,188,0.3),transparent);margin:16px 0}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:500}
+.badge-ok{background:var(--mint-l);color:var(--mint-d);border:1px solid rgba(168,216,185,0.5)}
+.badge-warn{background:var(--peach-l);color:var(--peach-d);border:1px solid rgba(245,196,160,0.5)}
+.badge-bad{background:#FEECEC;color:#C0392B;border:1px solid rgba(220,100,100,0.3)}
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th{text-align:left;padding:8px 10px;font-size:10px;font-weight:500;color:var(--rose-d);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid rgba(242,168,188,0.3)}
+.data-table td{padding:10px;border-bottom:1px solid rgba(242,168,188,0.15);color:var(--brown)}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:var(--rose-l)}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.kpi{background:white;border-radius:var(--r-md);padding:14px;border:1px solid rgba(242,168,188,0.2);box-shadow:var(--shadow);text-align:center}
+.kpi-icon{font-size:22px;margin-bottom:6px}
+.kpi-label{font-size:10px;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kpi-value{font-family:'Playfair Display',serif;font-size:20px;color:var(--brown)}
+.kpi-value.green{color:var(--mint-d)}
+.kpi-value.purple{color:var(--lav-d)}
+.progress-wrap{margin:10px 0}
+.progress-head{display:flex;justify-content:space-between;font-size:12px;color:var(--gray);margin-bottom:6px}
+.progress-track{height:8px;border-radius:8px;background:var(--rose-m);overflow:hidden}
+.progress-bar{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--rose),var(--rose-d));transition:width .5s ease}
+.progress-bar.green{background:linear-gradient(90deg,var(--mint),var(--mint-d))}
+.ing-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:var(--r-sm);background:var(--gray-l);margin-bottom:6px;border:1px solid transparent;transition:all .2s}
+.ing-item:hover{border-color:var(--rose-m);background:var(--rose-l)}
+.ing-name{font-size:13px;font-weight:500;color:var(--brown)}
+.ing-cost{font-size:12px;color:var(--mint-d);font-weight:500}
+.ing-actions{display:flex;gap:2px}
+.ing-del{background:none;border:none;color:rgba(122,69,40,0.3);cursor:pointer;font-size:13px;padding:4px 6px;border-radius:6px;transition:.2s}
+.ing-del:hover{color:#C0392B;background:#FEECEC}
+.ing-edit{background:none;border:none;color:rgba(123,99,201,0.4);cursor:pointer;font-size:13px;padding:4px 6px;border-radius:6px;transition:.2s}
+.ing-edit:hover{color:var(--lav-d);background:var(--lav-l)}
+.recipe-num{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--lav));display:flex;align-items:center;justify-content:center;font-size:11px;color:white;font-weight:500;flex-shrink:0}
+.advice{background:linear-gradient(135deg,var(--lav-l),#F8F5FF);border:1px solid rgba(201,184,240,0.4);border-radius:var(--r-md);padding:14px;margin-bottom:10px}
+.advice-head{font-size:12px;font-weight:500;color:var(--lav-d);margin-bottom:4px}
+.advice-body{font-size:12px;color:var(--gray);line-height:1.6}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);border-top:1px solid rgba(242,168,188,0.3);display:flex;justify-content:space-around;padding:8px 0 12px;z-index:200}
+.bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 12px;border-radius:12px;transition:.2s;background:none;border:none;font-family:'DM Sans',sans-serif}
+.bnav-item:hover{background:var(--rose-l)}
+.bnav-icon{width:36px;height:36px;border-radius:12px;background:transparent;display:flex;align-items:center;justify-content:center;font-size:18px;transition:.2s}
+.bnav-item.active .bnav-icon{background:var(--brown);box-shadow:0 4px 12px rgba(61,35,20,0.25)}
+.bnav-label{font-size:10px;color:var(--gray);transition:.2s}
+.bnav-item.active .bnav-label{color:var(--brown);font-weight:500}
+.empty{text-align:center;padding:32px 20px;color:var(--gray)}
+.empty-icon{font-size:40px;margin-bottom:10px;opacity:.5}
+.empty-text{font-size:13px;line-height:1.6}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--brown);color:white;padding:10px 20px;border-radius:30px;font-size:13px;opacity:0;transition:all .3s;z-index:999;white-space:nowrap;box-shadow:0 4px 20px rgba(61,35,20,0.3)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.autocomplete-wrap{position:relative}
+.autocomplete-list{position:absolute;top:100%;left:0;right:0;background:white;border:1px solid rgba(242,168,188,0.4);border-radius:var(--r-sm);box-shadow:var(--shadow-md);z-index:500;max-height:180px;overflow-y:auto;margin-top:2px}
+.autocomplete-item{padding:10px 14px;font-size:13px;cursor:pointer;border-bottom:1px solid rgba(242,168,188,0.15);color:var(--brown);transition:.15s;display:flex;justify-content:space-between;align-items:center}
+.autocomplete-item:last-child{border-bottom:none}
+.autocomplete-item:hover{background:var(--rose-l)}
+.autocomplete-item span{font-size:11px;color:var(--mint-d);font-weight:500}
+.eq-card{background:linear-gradient(135deg,var(--peach-l),#FFF5EE);border:1px solid rgba(245,196,160,0.5);border-radius:var(--r-md);padding:14px;margin-bottom:10px}
+.eq-title{font-family:'Playfair Display',serif;font-size:13px;color:var(--peach-d);margin-bottom:8px}
+.eq-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(245,196,160,0.3);font-size:13px}
+.eq-row:last-child{border-bottom:none}
+.eq-val{font-weight:500;color:var(--brown)}
+.comp-item{background:white;border-radius:var(--r-md);border:1px solid rgba(242,168,188,0.2);padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.comp-rank{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0}
+.r1{background:linear-gradient(135deg,#FFD700,#FFA500);color:white}
+.r2{background:linear-gradient(135deg,#C0C0C0,#A0A0A0);color:white}
+.r3{background:linear-gradient(135deg,#CD7F32,#A0522D);color:white}
+.rn{background:var(--gray-l);color:var(--gray)}
+.comp-info{flex:1}
+.comp-name{font-size:13px;font-weight:500;color:var(--brown);margin-bottom:6px}
+.comp-bar-row{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--gray);margin-bottom:4px}
+.comp-bar-track{flex:1;height:5px;border-radius:5px;background:var(--rose-m);overflow:hidden}
+.comp-bar-fill{height:100%;border-radius:5px;transition:width .5s ease}
+.sim-result{background:var(--lav-l);border:1px solid rgba(201,184,240,0.4);border-radius:var(--r-md);padding:14px;margin-top:10px}
+.sim-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid rgba(201,184,240,0.2)}
+.sim-row:last-child{border-bottom:none;font-weight:500}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--rose-m);border-radius:4px}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-icon">🎂</div>
+      <div><div class="brand-name">Crokan enseña</div><div class="brand-by">by Andrea V.</div></div>
+    </div>
+    <button class="save-btn" onclick="saveData()">Guardar ✦</button>
+  </div>
+  <div class="nav-wrap">
+    <div class="nav-pills">
+      <button class="pill active" data-panel="dashboard">Dashboard</button>
+      <button class="pill" data-panel="ingredientes">Ingredientes</button>
+      <button class="pill" data-panel="manoobra">Mano de obra</button>
+      <button class="pill" data-panel="recetas">Recetas</button>
+      <button class="pill" data-panel="gastos">Gastos fijos</button>
+      <button class="pill" data-panel="precios">Precios</button>
+      <button class="pill" data-panel="equilibrio">Equilibrio</button>
+      <button class="pill" data-panel="comparador">Comparador</button>
+      <button class="pill" data-panel="simulador">Simulador</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="section-intro"><div class="section-title">Mi negocio ✦</div><div class="section-sub">Resumen de rentabilidad en tiempo real</div></div>
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-icon">💰</div><div class="kpi-label">Ingreso proyectado</div><div class="kpi-value" id="kpi-ingreso">$0.00</div></div>
+        <div class="kpi"><div class="kpi-icon">✨</div><div class="kpi-label">Ganancia neta</div><div class="kpi-value green" id="kpi-ganancia">$0.00</div></div>
+        <div class="kpi"><div class="kpi-icon">⏱</div><div class="kpi-label">Tu valor/hora</div><div class="kpi-value purple" id="kpi-hora">$0.00</div></div>
+        <div class="kpi"><div class="kpi-icon">🏠</div><div class="kpi-label">Gastos fijos/mes</div><div class="kpi-value" id="kpi-gastos">$0.00</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-title-icon" style="background:var(--rose-l)">📈</div>Progreso hacia la rentabilidad</div>
+        <div class="progress-wrap">
+          <div class="progress-head"><span>Ganancia vs gastos fijos</span><span id="prog-pct" style="font-weight:500">0%</span></div>
+          <div class="progress-track"><div class="progress-bar" id="prog-bar" style="width:0%"></div></div>
+        </div>
+        <div style="font-size:12px;color:var(--gray);margin-top:8px" id="prog-msg">Completa recetas y ventas para ver tu análisis</div>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-title-icon" style="background:var(--peach-l)">🧁</div>Tus productos</div>
+        <div id="dash-product-list"><div class="empty"><div class="empty-icon">🧁</div><div class="empty-text">Ve a <strong>Recetas</strong> para agregarlas.</div></div></div>
+      </div>
+      <div class="advice"><div class="advice-head">✦ Consejo del día</div><div class="advice-body" id="daily-advice">Tu tiempo es tu activo más valioso. Define tu valor hora y cóbralo en cada receta.</div></div>
+      <div class="advice" style="background:linear-gradient(135deg,var(--mint-l),#F0FEF5);border-color:rgba(168,216,185,0.4)"><div class="advice-head" style="color:var(--mint-d)">✦ Estado de rentabilidad</div><div class="advice-body" id="rentability-advice">Completa Precios y define cuántas unidades planeas vender al mes.</div></div>
+    </div>
+
+    <!-- INGREDIENTES -->
+    <div class="panel" id="panel-ingredientes">
+      <div class="section-intro"><div class="section-title">Ingredientes ✦</div><div class="section-sub">El costo por unidad se muestra con 4 decimales para máxima precisión.</div></div>
+      <div class="tip">💡 Si compras 1 kg de harina escribe <strong>1000</strong> en cantidad y <strong>g</strong> en unidad. Así obtienes el costo exacto por gramo.</div>
+      <div class="card">
+        <div class="card-title"><div class="card-title-icon" style="background:var(--rose-l)">+</div><span id="ing-form-title">Agregar ingrediente</span></div>
+        <input type="hidden" id="ing-edit-idx" value="-1">
+        <div class="field"><label class="field-label">Nombre del ingrediente</label><input class="field-input" id="ing-nombre" placeholder="Ej: Harina de trigo"></div>
+        <div class="field-row">
+          <div class="field"><label class="field-label">Cantidad comprada</label><input class="field-input" id="ing-cantidad" type="number" step="any" placeholder="1000" oninput="calcIngCosto()"></div>
+          <div class="field"><label class="field-label">Unidad</label><select class="field-input" id="ing-unidad" onchange="calcIngCosto()"><option>g</option><option>ml</option><option>und</option><option>kg</option><option>lb</option><option>oz</option></select></div>
+        </div>
+        <div class="field"><label class="field-label">Precio pagado (USD $)</label><input class="field-input" id="ing-precio" type="number" step="0.01" placeholder="3.50" oninput="calcIngCosto()"></div>
+        <div class="divider"></div>
+        <div class="field"><label class="field-label">Costo por unidad — calculado automáticamente</label><div class="field-auto" id="ing-costo-unit">—</div></div>
+        <div class="btn-row">
+          <button class="btn" id="ing-save-btn" onclick="guardarIngrediente()">Agregar ingrediente</button>
+          <button class="btn btn-ghost btn-sm" id="ing-cancel-btn" onclick="cancelarEditIng()" style="display:none">Cancelar</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-title-icon" style="background:var(--mint-l)">📋</div>Mis ingredientes (<span id="ing-count">0</span>)</div>
+        <div id="ing-list"><div class="empty"><div class="empty-icon">🥚</div><div class="empty-text">Agrega el primero arriba.</div></div></div>
+      </div>
+    </div>
+
+    <!-- MANO DE OBRA -->
+    <div class="panel" id="panel-manoobra">
+      <div class="section-intro"><div class="section-title">Mano de obra ✦</div><div class="section-sub">Tu tiempo tiene precio. Define cuánto vale cada hora.</div></div>
+      <div class="tip">💡 Escribe cuánto <strong>quieres ganar</strong> al mes. Eso define tu valor hora real.</div>
+      <div class="card">
+        <div class="card-title"><div class="card-title-icon" style="background:var(--lav-l)">👑</div>Tu valor por hora</div>
+        <div class="field"><label class="field-label">Meta de ingreso mensual ($)</label><input class="field-input" id="mo-meta" type="number" placeholder="2000" oninput="calcMO()"></div>
+        <div class="field-row">
+          <div class="field"><label class="field-label">Días/mes trabajados</label><input class="field-input" id="mo-dias" type="number" placeholder="20" oninput="calcMO()"></div>
+          <div class="field"><label class="field-label">Horas por día</label><input class="field-input" id="mo-horas" type="number" placeholder="8" oninput="calcMO()"></div>
+        </div>
+        <div class="divider"></div>
+        <div class="field"><label class="field-label">Total horas al mes</label><div class="field-auto" id="mo-total-h">—</div></div>
+        <div class="field"><label class="field-label" style="color:var(--lav-d)">✦ Tu valor por hora</label><div class="field-result" id="mo-valor-hora">$0.0000 / hora</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-title-icon" style="background:var(--peach-l)">📊</div>Referencia por nivel</div>
+        <table class="data-table"><thead><tr><th>Nivel</th><th>Rango sugerido</th></tr></thead><tbody>
+          <tr><td>Principiante (0–1 año)</td><td style="color:var(--mint-d);font-weight:500">$8 – $12/hr</td></tr>
+          <tr><td>Intermedio (1–3 años)</td><td style="color:var(--mint-d);font-weight:500">$12 – $20/hr</td></tr>
+          <tr><td>Avanzado (3+ años)</td><td style="color:var(--lav-d);font-weight:500">$20 – $35/hr</td></tr>
+          <tr><td>Chef profesional</td><td style="color:var(--rose-d);font-weight:500">$35+ /hr</td></tr>
+        </tbody></table>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-title-icon" style="background:var(--mint-l)">🤝</div>Ayudantes (opcional)</div>
+        <div class="tip" style="margin-bottom:12px">Registra el costo hora de tus ayudantes para incluirlo en recetas.</div>
+        <div class="field"><label class="field-label">Nombre del ayudante</label><input class="field-input" id="ay-nombre" placeholder="Ej: Asistente 1"></div>
+        <div class="field"><label class="field-label">Valor por hora ($)</label><input class="field-input" id="ay-hora" type="number" step="0.01" placeholder="8.00"></div>
+        <button class="btn btn-ghost" onclick="agregarAyudante()">Agregar ayudante</button>
+        <div id="ay-list" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+    <!-- RECETAS -->
+    <div class="panel" id="panel-recetas">
+      <div class="section-intro"><div class="section-title">Recetas ✦</div><div class="section-sub">Calcula el costo exacto de cada producto.</div></div>
+      <div class="tip">💡 Al escribir el nombre de un ingrediente aparecerán sugerencias de tu lista con el costo ya precargado automáticamente.</div>
+      <div class="card">
+        <div class="card-title"><div class="card-title-icon" style="background:var(--rose-l)">🧁</div><span id="rec-form-title">Nueva receta</span></div>
+        <input type="hidden" id="rec-edit-idx" value="-1">
+        <div class="field"><label class="field-label">Nombre del producto</label><input class="field-input" id="rec-nombre" placeholder="Ej: Cupcakes de vainilla"></div>
+        <div class="field"><label class="field-label">¿Cuántas unidades produce?</label><input class="field-input" id="rec-unidades" type="number" placeholder="12" oninput="calcReceta()"></div>
+        <div class="divider"></div>
+        <div style="font-size:11px;font-weight:500;color:var(--rose-d);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">🥣 Ingredientes de esta receta</div>
+        <div id="rec-ing-fields"></div>
+        <button class="btn btn-ghost btn-sm" onclick="addIngRow()" style="margin-bottom:14px">+ Agregar ingrediente</button>
+        <div class="divider"></div>
+        <div style="font-size:11px;font-weight:500;color:var(--rose-d);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">⏱ Tiempo y mano de obra</div>
+        <div class="field-row">
+          <div class="field"><label class="field-label">Horas trabajadas (tú)</label><input class="field-input" id="rec-horas" type="number" step="0.25" placeholder="2" oninput="calcReceta()"></div>
+          <div class="field"><label class="field-label">Costo MO (auto)</label><div class="field-auto" id="rec-costo-mo">—</div></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label class="field-label">Horas ayudante</label><input class="field-input" id="rec-horas-ay" type="number" step="0.25" placeholder="0" oninput="calcReceta()"></div>
+          <div class="field"><label class="field-label">Valor hora ayudante ($)</label><input class="field-input" id="rec-valor-ay" type="number" step="0.01" placeholder="0" oninput="calcReceta()"></div>
+        </div>
+        <div class="divider"></div>
+        <div style="font-size:11px;font-weight:500;color:var(--rose-d);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">📦 Gastos extra (opcional)</div>
+        <div class="field-row">
+          <div class="field"><label class="field-label">Empaque / caja ($)</label><input class="field-input" id="rec-empaque" type="number" step="0.01" placeholder="0" oninput="calcReceta()"></div>
+          <div class="field"><label class="field-label">Transporte ($)</label><input class="field-input" id="rec-transporte" type="number" step="0.01" placeholder="0" oninput="calcReceta()"></div>
+        </div>
+        <div class="field"><label class="field-label">Otro gasto ($)</label><input class="field-input" id="rec-otro" type="number" step="0.01" placeholder="0" oninput="calcReceta()"></div>
+        <div class="divider"></div>
+        <div class="field"><label class="field-label">Costo total de la receta</label><div class="field-auto" id="rec-costo-total">—</div></div>
+        <div class="field"><label class="field-label" style="color:var(--lav-d)">✦ Costo por unidad</label><div class="field-result" id="rec-costo-unit">$0.0000 por unidad</div></div>
+        <div class="btn-row">
+          <button class="btn btn-mint" id="rec-save-btn" onclick="guardarReceta()">Guardar receta</button>
+          <button class="btn btn-ghost btn-sm" id="rec-cancel-btn" onclick="cancelarEditRec()" style="display:none">Cancelar</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-title-icon" style="background:var(--mint-l)">📋</div>Mis recetas (<span id="rec-count">0</span>)</div>
+        <div id="rec-list"><div class="empty"><div class="empty-icon">🎂</div><div class="empty-text">Agrega la primera arriba.</div></div></div>
+      </div>
+    </div>
+
+    <!-- GASTOS FIJOS -->
+    <div class="panel" id="panel-gastos">
+      <div class="section-intro"><div class="section-title">Gastos fijos ✦</div><div class="section-sub">Lo que pagas mensualmente aunque no vendas nada.</div></div>
+      <div class="tip">💡 Sin gastos fijos, tu costo de negocio no es real. Inclúyelos para calcular tu punto de equilibrio verdadero.</div>
+      <div class="card">
+        <div class="card-title"><div class="card-title-icon" style="background:var(--peach-l)">+</div>Agregar gasto fijo</div>
+        <div class="field"><label class="field-label">Descripción</label><input class="field-input" id="gf-nombre" placeholder="Ej: Electricidad"></div>
+        <div class="field-row">
+          <div class="field"><label class="field-label">Monto mensual ($)</label><input class="field-input" id="gf-monto" type="number" step="0.01" placeholder="80.00"></div>
+          <div class="field"><label class="field-label">Frecuencia</label><select class="field-input" id="gf-freq"><option>Mensual</option><option>Bimestral</option><option>Trimestral</option><option>Anual</option></select></div>
+        </div>
+        <button class="btn" onclick="agregarGasto()">Agregar gasto</button>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-title-icon" style="background:var(--mint-l)">📋</div>Mis gastos fijos</div>
+        <div id="gf-list"><div class="empty"><div class="empty-icon">🏠</div><div class="empty-text">Agrega tus gastos fijos.</div></div></div>
+        <div class="divider" id="gf-total-div" style="display:none"></div>
+        <div id="gf-total-wrap" style="display:none">
+          <div class="field"><label class="field-label">Total gastos fijos mensuales</label><div class="field-result" id="gf-total">$0.00</div></div>
+          <div class="field"><label class="field-label">Gasto fijo por día trabajado</label><div class="field-auto" id="gf-x-dia">—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRECIOS -->
+    <div class="panel" id="panel-precios">
+      <div class="section-intro"><div class="section-title">Precios de venta ✦</div><div class="section-sub">Define tu margen y obtén el precio ideal para cada producto.</div></div>
+      <div class="tip">💡 Margen recomendado para pastelería artesanal: <strong>50–70%</strong>. Debajo del 30% no es sostenible.</div>
+      <div class="field" style="margin-bottom:14px"><label class="field-label">Unidades producidas por día (promedio)</label><input class="field-input" id="pr-unid-dia" type="number" placeholder="10" oninput="renderPrecios()"></div>
+      <div id="precios-list"><div class="empty card"><div class="empty-icon">🏷️</div><div class="empty-text">Primero agrega recetas.</div></div></div>
+    </div>
+
+    <!-- EQUILIBRIO -->
+    <div class="panel" id="panel-equilibrio">
+      <div class="section-intro"><div class="section-title">Punto de equilibrio ✦</div><div class="section-sub">¿Cuántas unidades necesitas vender al mes para no perder dinero?</div></div>
+      <div class="tip">💡 Por encima del punto de equilibrio, <strong>todo es ganancia neta</strong>.</div>
+      <div id="equilibrio-list"><div class="empty card"><div class="empty-icon">⚖️</div><div class="empty-text">Agrega recetas y gastos fijos para ver tu punto de equilibrio.</div></div></div>
+      <div class="card" id="eq-resumen" style="display:none">
+        <div class="card-title"><div class="card-title-icon" style="background:var(--mint-l)">📊</div>Resumen mensual consolidado</div>
+        <div id="eq-resumen-body"></div>
+      </div>
+    </div>
+
+    <!-- COMPARADOR -->
+    <div class="panel" id="panel-comparador">
+      <div class="section-intro"><div class="section-title">Comparador ✦</div><div class="section-sub">Ranking de tus productos por rentabilidad. ¿Cuál te deja más dinero?</div></div>
+      <div id="comparador-list"><div class="empty card"><div class="empty-icon">🏆</div><div class="empty-text">Agrega recetas y precios para ver el ranking.</div></div></div>
+    </div>
+
+    <!-- SIMULADOR -->
+    <div class="panel" id="panel-simulador">
+      <div class="section-intro"><div class="section-title">Simulador ✦</div><div class="section-sub">¿Qué pasa si subes el precio o reduces costos? Pruébalo sin riesgo.</div></div>
+      <div class="tip">💡 Este simulador <strong>no modifica</strong> tus datos reales. Es solo para explorar escenarios antes de decidir.</div>
+      <div class="card">
+        <div class="card-title"><div class="card-title-icon" style="background:var(--lav-l)">🔮</div>Simular escenario</div>
+        <div class="field"><label class="field-label">Producto a simular</label><select class="field-input" id="sim-producto" onchange="renderSimulador()"><option value="">— Selecciona un producto —</option></select></div>
+        <div class="field-row">
+          <div class="field"><label class="field-label">Nuevo precio de venta ($)</label><input class="field-input" id="sim-precio" type="number" step="0.01" placeholder="0.00" oninput="renderSimulador()"></div>
+          <div class="field"><label class="field-label">Unidades a vender/mes</label><input class="field-input" id="sim-ventas" type="number" placeholder="0" oninput="renderSimulador()"></div>
+        </div>
+        <div class="field"><label class="field-label">Reducción en costo ingredientes ($)</label><input class="field-input" id="sim-ahorro" type="number" step="0.01" placeholder="0.00" oninput="renderSimulador()"></div>
+        <div id="sim-result" class="sim-result" style="display:none"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <button class="bnav-item active" data-panel="dashboard"><div class="bnav-icon">📊</div><span class="bnav-label">Dashboard</span></button>
+  <button class="bnav-item" data-panel="ingredientes"><div class="bnav-icon">🥚</div><span class="bnav-label">Ingredientes</span></button>
+  <button class="bnav-item" data-panel="recetas"><div class="bnav-icon">🧁</div><span class="bnav-label">Recetas</span></button>
+  <button class="bnav-item" data-panel="precios"><div class="bnav-icon">🏷️</div><span class="bnav-label">Precios</span></button>
+  <button class="bnav-item" data-panel="comparador"><div class="bnav-icon">🏆</div><span class="bnav-label">Ranking</span></button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var state={ingredientes:[],ayudantes:[],recetas:[],gastosFijos:[],manoObra:{meta:0,dias:0,horas:0,valorHora:0},precios:{}};
+function $(id){return document.getElementById(id)}
+function fmt(n){return '$'+(isNaN(n)?0:parseFloat(n)).toFixed(2)}
+function fmt4(n){return '$'+(isNaN(n)?0:parseFloat(n)).toFixed(4)}
+function showToast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+
+document.querySelectorAll('.pill,.bnav-item').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    var p=btn.dataset.panel;
+    document.querySelectorAll('.pill').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.bnav-item').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(pan=>pan.classList.remove('active'));
+    document.querySelectorAll('[data-panel="'+p+'"]').forEach(b=>b.classList.add('active'));
+    $('panel-'+p).classList.add('active');
+    if(p==='precios')renderPrecios();
+    if(p==='dashboard')updateDashboard();
+    if(p==='equilibrio')renderEquilibrio();
+    if(p==='comparador')renderComparador();
+    if(p==='simulador')poblarSimulador();
+  });
+});
+
+function calcIngCosto(){
+  var qty=parseFloat($('ing-cantidad').value)||0,precio=parseFloat($('ing-precio').value)||0,unit=$('ing-unidad').value;
+  $('ing-costo-unit').textContent=(qty&&precio)?fmt4(precio/qty)+' por '+unit:'—';
+}
+
+function guardarIngrediente(){
+  var nombre=$('ing-nombre').value.trim(),cantidad=parseFloat($('ing-cantidad').value)||0,precio=parseFloat($('ing-precio').value)||0,unidad=$('ing-unidad').value;
+  var idx=parseInt($('ing-edit-idx').value);
+  if(!nombre||!cantidad||!precio){showToast('Completa todos los campos');return;}
+  var ing={nombre,cantidad,precio,unidad,costoPorUnit:precio/cantidad};
+  if(idx>=0){state.ingredientes[idx]=ing;showToast('Ingrediente actualizado ✓');}
+  else{state.ingredientes.push(ing);showToast('Ingrediente agregado ✓');}
+  cancelarEditIng();renderIngredientes();
+}
+
+function cancelarEditIng(){
+  $('ing-nombre').value='';$('ing-cantidad').value='';$('ing-precio').value='';
+  $('ing-costo-unit').textContent='—';$('ing-edit-idx').value='-1';
+  $('ing-form-title').textContent='Agregar ingrediente';
+  $('ing-save-btn').textContent='Agregar ingrediente';
+  $('ing-cancel-btn').style.display='none';
+}
+
+function editarIng(i){
+  var ing=state.ingredientes[i];
+  $('ing-nombre').value=ing.nombre;$('ing-cantidad').value=ing.cantidad;
+  $('ing-precio').value=ing.precio;$('ing-unidad').value=ing.unidad;
+  $('ing-edit-idx').value=i;
+  $('ing-form-title').textContent='Editar ingrediente';
+  $('ing-save-btn').textContent='Guardar cambios';
+  $('ing-cancel-btn').style.display='';
+  calcIngCosto();
+  document.querySelector('#panel-ingredientes .card').scrollIntoView({behavior:'smooth'});
+}
+
+function renderIngredientes(){
+  var list=$('ing-list');$('ing-count').textContent=state.ingredientes.length;
+  if(!state.ingredientes.length){list.innerHTML='<div class="empty"><div class="empty-icon">🥚</div><div class="empty-text">Agrega el primero arriba.</div></div>';return;}
+  list.innerHTML=state.ingredientes.map((ing,i)=>`
+    <div class="ing-item">
+      <div><div class="ing-name">${ing.nombre}</div><div style="font-size:11px;color:var(--gray);margin-top:2px">${ing.cantidad}${ing.unidad} · ${fmt(ing.precio)}</div></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="ing-cost">${fmt4(ing.costoPorUnit)}/${ing.unidad}</div>
+        <div class="ing-actions"><button class="ing-edit" onclick="editarIng(${i})">✏️</button><button class="ing-del" onclick="eliminarIng(${i})">✕</button></div>
+      </div>
+    </div>`).join('');
+}
+
+function eliminarIng(i){if(!confirm('¿Eliminar este ingrediente?'))return;state.ingredientes.splice(i,1);renderIngredientes();showToast('Eliminado');}
+
+function calcMO(){
+  var meta=parseFloat($('mo-meta').value)||0,dias=parseFloat($('mo-dias').value)||0,horas=parseFloat($('mo-horas').value)||0,total=dias*horas;
+  state.manoObra={meta,dias,horas,valorHora:total?meta/total:0};
+  $('mo-total-h').textContent=total?total+' horas/mes':'—';
+  $('mo-valor-hora').textContent=total?fmt4(meta/total)+' / hora':'$0.0000 / hora';
+  $('kpi-hora').textContent=total?fmt(meta/total):'$0.00';
+  updateDashboard();
+}
+
+function agregarAyudante(){
+  var nombre=$('ay-nombre').value.trim()||'Ayudante',hora=parseFloat($('ay-hora').value)||0;
+  if(!hora){showToast('Ingresa el valor hora');return;}
+  state.ayudantes.push({nombre,hora});renderAyudantes();
+  $('ay-nombre').value='';$('ay-hora').value='';showToast('Ayudante agregado ✓');
+}
+
+function renderAyudantes(){
+  var list=$('ay-list');
+  if(!state.ayudantes.length){list.innerHTML='';return;}
+  list.innerHTML=state.ayudantes.map((ay,i)=>`
+    <div class="ing-item"><div><div class="ing-name">${ay.nombre}</div></div>
+    <div style="display:flex;align-items:center;gap:6px"><div class="ing-cost">${fmt(ay.hora)}/hr</div><button class="ing-del" onclick="eliminarAy(${i})">✕</button></div></div>`).join('');
+}
+
+function eliminarAy(i){state.ayudantes.splice(i,1);renderAyudantes();}
+
+var ingRowCount=0;
+function buildIngRow(idx){
+  var div=document.createElement('div');
+  div.className='ing-row-block';div.style.marginBottom='14px';div.dataset.rowidx=idx;
+  div.innerHTML=`
+    <div class="field-row" style="margin-bottom:8px;align-items:end">
+      <div class="field" style="margin:0"><label class="field-label">Ingrediente</label>
+        <div class="autocomplete-wrap">
+          <input class="field-input rec-ing-name" placeholder="Nombre del ingrediente" autocomplete="off" oninput="acInput(this,${idx})">
+          <div class="autocomplete-list" id="ac-list-${idx}" style="display:none"></div>
+        </div>
+      </div>
+      <div class="field" style="margin:0"><label class="field-label">Cantidad usada</label><input class="field-input rec-ing-qty" type="number" step="any" placeholder="250" oninput="calcReceta()"></div>
+    </div>
+    <div class="field-row" style="align-items:end">
+      <div class="field" style="margin:0"><label class="field-label">Costo/unidad ($)</label><input class="field-input rec-ing-cost" type="number" step="0.0001" placeholder="0.0000" oninput="calcReceta()"></div>
+      <div class="field" style="margin:0"><label class="field-label">Subtotal</label><div class="field-auto rec-ing-sub">—</div></div>
+    </div>`;
+  return div;
+}
+
+function addIngRow(){$('rec-ing-fields').appendChild(buildIngRow(ingRowCount++));}
+
+function acInput(el,idx){
+  var val=el.value.toLowerCase().trim(),list=$('ac-list-'+idx);
+  if(!val||!state.ingredientes.length){list.style.display='none';return;}
+  var matches=state.ingredientes.filter(i=>i.nombre.toLowerCase().includes(val));
+  if(!matches.length){list.style.display='none';return;}
+  list.innerHTML=matches.map(i=>`<div class="autocomplete-item" onclick="selectIng(${idx},'${i.nombre.replace(/'/g,"\\'")}',${i.costoPorUnit})"><span>${i.nombre}</span><span>${fmt4(i.costoPorUnit)}/${i.unidad}</span></div>`).join('');
+  list.style.display='block';
+}
+
+function selectIng(idx,nombre,costo){
+  var block=document.querySelector('[data-rowidx="'+idx+'"]');if(!block)return;
+  block.querySelector('.rec-ing-name').value=nombre;
+  block.querySelector('.rec-ing-cost').value=costo.toFixed(4);
+  var list=$('ac-list-'+idx);if(list)list.style.display='none';
+  calcReceta();
+}
+
+document.addEventListener('click',function(e){
+  if(!e.target.classList.contains('rec-ing-name'))document.querySelectorAll('.autocomplete-list').forEach(l=>l.style.display='none');
+});
+
+function calcReceta(){
+  var unidades=parseFloat($('rec-unidades').value)||1,totalIng=0;
+  document.querySelectorAll('#rec-ing-fields .ing-row-block').forEach(block=>{
+    var qty=parseFloat(block.querySelector('.rec-ing-qty').value)||0;
+    var cost=parseFloat(block.querySelector('.rec-ing-cost').value)||0;
+    var sub=qty*cost;totalIng+=sub;
+    block.querySelector('.rec-ing-sub').textContent=sub?fmt4(sub):'—';
+  });
+  var horasTu=parseFloat($('rec-horas').value)||0,valorHora=state.manoObra.valorHora||0,costoMO=horasTu*valorHora;
+  $('rec-costo-mo').textContent=costoMO?fmt4(costoMO):(valorHora?fmt4(costoMO):'Define tu valor hora');
+  var costoAy=(parseFloat($('rec-horas-ay').value)||0)*(parseFloat($('rec-valor-ay').value)||0);
+  var extra=(parseFloat($('rec-empaque').value)||0)+(parseFloat($('rec-transporte').value)||0)+(parseFloat($('rec-otro').value)||0);
+  var total=totalIng+costoMO+costoAy+extra,xUnit=unidades?total/unidades:0;
+  $('rec-costo-total').textContent=total?fmt4(total):'—';
+  $('rec-costo-unit').textContent=xUnit?fmt4(xUnit)+' por unidad':'$0.0000 por unidad';
+}
+
+function guardarReceta(){
+  var nombre=$('rec-nombre').value.trim();if(!nombre){showToast('Escribe el nombre');return;}
+  var unidades=parseFloat($('rec-unidades').value)||1,totalIng=0;
+  document.querySelectorAll('#rec-ing-fields .ing-row-block').forEach(block=>{
+    totalIng+=(parseFloat(block.querySelector('.rec-ing-qty').value)||0)*(parseFloat(block.querySelector('.rec-ing-cost').value)||0);
+  });
+  var horasTu=parseFloat($('rec-horas').value)||0;
+  var costoMO=horasTu*(state.manoObra.valorHora||0);
+  var costoAy=(parseFloat($('rec-horas-ay').value)||0)*(parseFloat($('rec-valor-ay').value)||0);
+  var empaque=parseFloat($('rec-empaque').value)||0,transporte=parseFloat($('rec-transporte').value)||0,otroGasto=parseFloat($('rec-otro').value)||0;
+  var extra=empaque+transporte+otroGasto,total=totalIng+costoMO+costoAy+extra,costoUnit=unidades?total/unidades:0;
+  var receta={nombre,unidades,totalIng,costoMO,costoAy,extra,total,costoUnit,horasTu,horasAy:parseFloat($('rec-horas-ay').value)||0,valorAy:parseFloat($('rec-valor-ay').value)||0,empaque,transporte,otroGasto};
+  var idx=parseInt($('rec-edit-idx').value);
+  if(idx>=0){state.recetas[idx]=receta;showToast('Receta actualizada ✓');}
+  else{state.recetas.push(receta);showToast('Receta guardada ✓');}
+  cancelarEditRec();renderRecetas();updateDashboard();poblarSimulador();
+}
+
+function cancelarEditRec(){
+  $('rec-nombre').value='';$('rec-unidades').value='';$('rec-horas').value='';
+  $('rec-horas-ay').value='';$('rec-valor-ay').value='';
+  $('rec-empaque').value='';$('rec-transporte').value='';$('rec-otro').value='';
+  $('rec-ing-fields').innerHTML='';ingRowCount=0;addIngRow();
+  $('rec-costo-total').textContent='—';$('rec-costo-unit').textContent='$0.0000 por unidad';
+  $('rec-costo-mo').textContent='—';$('rec-edit-idx').value='-1';
+  $('rec-form-title').textContent='Nueva receta';
+  $('rec-save-btn').textContent='Guardar receta';$('rec-cancel-btn').style.display='none';
+}
+
+function editarRec(i){
+  var r=state.recetas[i];
+  $('rec-nombre').value=r.nombre;$('rec-unidades').value=r.unidades;
+  $('rec-horas').value=r.horasTu||0;$('rec-horas-ay').value=r.horasAy||0;$('rec-valor-ay').value=r.valorAy||0;
+  $('rec-empaque').value=r.empaque||0;$('rec-transporte').value=r.transporte||0;$('rec-otro').value=r.otroGasto||0;
+  $('rec-edit-idx').value=i;$('rec-form-title').textContent='Editar receta';
+  $('rec-save-btn').textContent='Guardar cambios';$('rec-cancel-btn').style.display='';
+  calcReceta();document.querySelector('#panel-recetas .card').scrollIntoView({behavior:'smooth'});
+}
+
+function renderRecetas(){
+  var list=$('rec-list');$('rec-count').textContent=state.recetas.length;
+  if(!state.recetas.length){list.innerHTML='<div class="empty"><div class="empty-icon">🎂</div><div class="empty-text">Agrega la primera arriba.</div></div>';return;}
+  list.innerHTML=state.recetas.map((r,i)=>`
+    <div class="ing-item" style="flex-direction:column;align-items:flex-start">
+      <div style="display:flex;justify-content:space-between;width:100%;align-items:center">
+        <div class="ing-name">${r.nombre}</div>
+        <div class="ing-actions"><button class="ing-edit" onclick="editarRec(${i})">✏️</button><button class="ing-del" onclick="eliminarRec(${i})">✕</button></div>
+      </div>
+      <div style="font-size:11px;color:var(--gray);margin-top:3px">${r.unidades} unidades · Total: ${fmt4(r.total)}</div>
+      <div style="margin-top:5px"><span class="badge badge-ok">Costo/unidad: ${fmt4(r.costoUnit)}</span></div>
+    </div>`).join('');
+}
+
+function eliminarRec(i){if(!confirm('¿Eliminar esta receta?'))return;state.recetas.splice(i,1);if(state.precios[i])delete state.precios[i];renderRecetas();updateDashboard();renderPrecios();renderEquilibrio();renderComparador();poblarSimulador();showToast('Eliminada');}
+
+function agregarGasto(){
+  var nombre=$('gf-nombre').value.trim(),monto=parseFloat($('gf-monto').value)||0,freq=$('gf-freq').value;
+  if(!nombre||!monto){showToast('Completa nombre y monto');return;}
+  state.gastosFijos.push({nombre,monto,freq});renderGastos();
+  $('gf-nombre').value='';$('gf-monto').value='';showToast('Gasto agregado ✓');updateDashboard();
+}
+
+function renderGastos(){
+  var list=$('gf-list'),total=state.gastosFijos.reduce((s,g)=>s+g.monto,0);
+  if(!state.gastosFijos.length){list.innerHTML='<div class="empty"><div class="empty-icon">🏠</div><div class="empty-text">Agrega tus gastos fijos.</div></div>';$('gf-total-div').style.display='none';$('gf-total-wrap').style.display='none';return;}
+  list.innerHTML=state.gastosFijos.map((g,i)=>`
+    <div class="ing-item"><div><div class="ing-name">${g.nombre}</div><div style="font-size:11px;color:var(--gray)">${g.freq}</div></div>
+    <div style="display:flex;align-items:center;gap:6px"><div class="ing-cost">${fmt(g.monto)}/mes</div><button class="ing-del" onclick="eliminarGasto(${i})">✕</button></div></div>`).join('');
+  $('gf-total-div').style.display='block';$('gf-total-wrap').style.display='block';
+  $('gf-total').textContent=fmt(total);
+  var dias=state.manoObra.dias||20;
+  $('gf-x-dia').textContent=dias?fmt(total/dias)+' por día trabajado':'—';
+  $('kpi-gastos').textContent=fmt(total);
+}
+
+function eliminarGasto(i){state.gastosFijos.splice(i,1);renderGastos();updateDashboard();showToast('Eliminado');}
+
+function getGfXUnid(){
+  var unidDia=parseFloat($('pr-unid-dia').value)||10,totalGF=state.gastosFijos.reduce((s,g)=>s+g.monto,0);
+  return unidDia?(totalGF/(state.manoObra.dias||20))/unidDia:0;
+}
+
+function renderPrecios(){
+  var wrap=$('precios-list'),gfXUnid=getGfXUnid();
+  if(!state.recetas.length){wrap.innerHTML='<div class="empty card"><div class="empty-icon">🏷️</div><div class="empty-text">Primero agrega recetas.</div></div>';return;}
+  wrap.innerHTML=state.recetas.map((r,i)=>{
+    var costoReal=r.costoUnit+gfXUnid,margen=state.precios[i]?.margen??0.60,ventasMes=state.precios[i]?.ventasMes??0;
+    var precioVenta=costoReal*(1+margen),ganUnit=precioVenta-costoReal;
+    var estadoClass=margen>=0.5?'badge-ok':margen>=0.3?'badge-warn':'badge-bad';
+    var estadoTxt=margen>=0.5?'Rentable ✓':margen>=0.3?'Aceptable':'Bajo — sube precio';
+    return `<div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px"><div class="recipe-num">${i+1}</div><div style="font-family:'Playfair Display',serif;font-size:15px">${r.nombre}</div></div>
+        <span class="badge ${estadoClass}">${estadoTxt}</span>
+      </div>
+      <div class="field-row3" style="margin-bottom:12px">
+        <div><div class="field-label" style="margin-bottom:3px">Costo receta</div><div style="font-size:13px;font-weight:500">${fmt4(r.costoUnit)}</div></div>
+        <div><div class="field-label" style="margin-bottom:3px">+ Gastos fijos</div><div style="font-size:13px;color:var(--gray)">${fmt4(gfXUnid)}</div></div>
+        <div><div class="field-label" style="margin-bottom:3px">Costo REAL</div><div style="font-size:13px;font-weight:500;color:var(--rose-d)">${fmt4(costoReal)}</div></div>
+      </div>
+      <div class="field" style="margin-bottom:10px">
+        <label class="field-label">Margen de ganancia (%)</label>
+        <input class="field-input" type="number" step="1" min="0" value="${Math.round(margen*100)}" oninput="updateMargen(${i},this.value/100)">
+      </div>
+      <div class="field-row" style="margin-bottom:12px">
+        <div><div class="field-label" style="margin-bottom:3px">Precio sugerido</div><div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--lav-d)">${fmt(precioVenta)}</div></div>
+        <div><div class="field-label" style="margin-bottom:3px">Ganancia/unidad</div><div style="font-size:16px;font-weight:500;color:var(--mint-d)">${fmt4(ganUnit)}</div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="field" style="margin-bottom:10px">
+        <label class="field-label">Unidades a vender este mes</label>
+        <input class="field-input" type="number" placeholder="0" value="${ventasMes}" oninput="updateVentas(${i},this.value)">
+      </div>
+      <div class="field-row">
+        <div><div class="field-label" style="margin-bottom:3px">Ingreso bruto/mes</div><div style="font-size:14px;font-weight:500">${fmt(precioVenta*ventasMes)}</div></div>
+        <div><div class="field-label" style="margin-bottom:3px">Ganancia neta/mes</div><div style="font-size:14px;font-weight:500;color:var(--mint-d)">${fmt(ganUnit*ventasMes)}</div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateMargen(i,val){if(!state.precios[i])state.precios[i]={margen:0.6,ventasMes:0};state.precios[i].margen=parseFloat(val)||0;renderPrecios();updateDashboard();renderComparador();renderEquilibrio();}
+function updateVentas(i,val){if(!state.precios[i])state.precios[i]={margen:0.6,ventasMes:0};state.precios[i].ventasMes=parseFloat(val)||0;renderPrecios();updateDashboard();}
+
+function renderEquilibrio(){
+  var wrap=$('equilibrio-list'),gfXUnid=getGfXUnid(),totalGF=state.gastosFijos.reduce((s,g)=>s+g.monto,0);
+  if(!state.recetas.length||!totalGF){wrap.innerHTML='<div class="empty card"><div class="empty-icon">⚖️</div><div class="empty-text">Agrega recetas y gastos fijos.</div></div>';$('eq-resumen').style.display='none';return;}
+  wrap.innerHTML=state.recetas.map((r,i)=>{
+    var margen=state.precios[i]?.margen??0.60,costoReal=r.costoUnit+gfXUnid,precioVenta=costoReal*(1+margen),ganUnit=precioVenta-costoReal;
+    var equilibrio=ganUnit>0?Math.ceil(totalGF/ganUnit):0,ventasMes=state.precios[i]?.ventasMes??0,cubref=ventasMes>=equilibrio&&equilibrio>0;
+    return `<div class="eq-card"><div class="eq-title">${r.nombre}</div>
+      <div class="eq-row"><span>Precio de venta</span><span class="eq-val">${fmt(precioVenta)}</span></div>
+      <div class="eq-row"><span>Ganancia por unidad</span><span class="eq-val">${fmt4(ganUnit)}</span></div>
+      <div class="eq-row"><span>Mínimo a vender/mes para no perder</span><span class="eq-val" style="color:var(--peach-d);font-size:16px">${equilibrio} unidades</span></div>
+      <div class="eq-row"><span>Tus ventas proyectadas</span><span class="eq-val" style="color:${cubref?'var(--mint-d)':'var(--rose-d)'}">${ventasMes} und — ${cubref?'✓ Cubres el equilibrio':'⚠ Por debajo del equilibrio'}</span></div>
+    </div>`;
+  }).join('');
+  $('eq-resumen').style.display='block';
+  var totalIngreso=0,totalGanancia=0;
+  state.recetas.forEach((r,i)=>{
+    var margen=state.precios[i]?.margen??0.60,ventas=state.precios[i]?.ventasMes??0,costoReal=r.costoUnit+gfXUnid,precio=costoReal*(1+margen);
+    totalIngreso+=precio*ventas;totalGanancia+=(precio-costoReal)*ventas;
+  });
+  $('eq-resumen-body').innerHTML=`
+    <div class="eq-row"><span>Ingreso bruto proyectado</span><span class="eq-val">${fmt(totalIngreso)}/mes</span></div>
+    <div class="eq-row"><span>Ganancia neta proyectada</span><span class="eq-val" style="color:var(--mint-d)">${fmt(totalGanancia)}/mes</span></div>
+    <div class="eq-row"><span>Total gastos fijos</span><span class="eq-val" style="color:var(--peach-d)">${fmt(totalGF)}/mes</span></div>
+    <div class="eq-row"><span style="font-weight:500">¿Eres rentable?</span><span class="eq-val" style="color:${totalGanancia>=totalGF?'var(--mint-d)':'#C0392B'};font-size:15px">${totalGanancia>=totalGF?'✓ Sí, eres rentable este mes':'✗ Aún no — necesitas más ventas'}</span></div>`;
+}
+
+function renderComparador(){
+  var wrap=$('comparador-list'),gfXUnid=getGfXUnid();
+  if(!state.recetas.length){wrap.innerHTML='<div class="empty card"><div class="empty-icon">🏆</div><div class="empty-text">Agrega recetas y precios para ver el ranking.</div></div>';return;}
+  var productos=state.recetas.map((r,i)=>{
+    var margen=state.precios[i]?.margen??0.60,costoReal=r.costoUnit+gfXUnid,precio=costoReal*(1+margen),ganUnit=precio-costoReal,ventas=state.precios[i]?.ventasMes??0;
+    return{nombre:r.nombre,margen,ganUnit,ingMes:precio*ventas,ganMes:ganUnit*ventas};
+  }).sort((a,b)=>b.margen-a.margen);
+  var maxGan=Math.max(...productos.map(p=>p.ganUnit),0.001),maxMes=Math.max(...productos.map(p=>p.ganMes),0.001);
+  var rankCls=['r1','r2','r3'];
+  wrap.innerHTML=productos.map((p,rank)=>`
+    <div class="comp-item">
+      <div class="comp-rank ${rankCls[rank]||'rn'}">${rank+1}</div>
+      <div class="comp-info">
+        <div class="comp-name">${p.nombre}</div>
+        <div class="comp-bar-row">Margen ${Math.round(p.margen*100)}%<div class="comp-bar-track"><div class="comp-bar-fill" style="width:${Math.min(100,p.margen*100)}%;background:var(--rose)"></div></div></div>
+        <div class="comp-bar-row">Gan/und ${fmt4(p.ganUnit)}<div class="comp-bar-track"><div class="comp-bar-fill" style="width:${Math.round((p.ganUnit/maxGan)*100)}%;background:var(--mint)"></div></div></div>
+        <div class="comp-bar-row">Gan/mes ${fmt(p.ganMes)}<div class="comp-bar-track"><div class="comp-bar-fill" style="width:${Math.round((p.ganMes/maxMes)*100)}%;background:var(--lav)"></div></div></div>
+      </div>
+    </div>`).join('');
+}
+
+function poblarSimulador(){
+  var sel=$('sim-producto'),cur=sel.value;
+  sel.innerHTML='<option value="">— Selecciona un producto —</option>';
+  state.recetas.forEach((r,i)=>{var o=document.createElement('option');o.value=i;o.textContent=r.nombre;sel.appendChild(o);});
+  if(cur)sel.value=cur;
+}
+
+function renderSimulador(){
+  var idx=parseInt($('sim-producto').value),res=$('sim-result');
+  if(isNaN(idx)||idx<0||!state.recetas[idx]){res.style.display='none';return;}
+  var r=state.recetas[idx],gfXUnid=getGfXUnid(),margenOrig=state.precios[idx]?.margen??0.60;
+  var costoReal=r.costoUnit+gfXUnid,precioOrig=costoReal*(1+margenOrig),ventasOrig=state.precios[idx]?.ventasMes??0;
+  var nuevoPrecio=parseFloat($('sim-precio').value)||precioOrig,nuevasVentas=parseFloat($('sim-ventas').value)||ventasOrig;
+  var ahorro=parseFloat($('sim-ahorro').value)||0,nuevoCostoUnit=Math.max(0,r.costoUnit-ahorro);
+  var nuevoCostoReal=nuevoCostoUnit+gfXUnid,nuevoMargen=nuevoCostoReal>0?(nuevoPrecio-nuevoCostoReal)/nuevoCostoReal:0;
+  var ganOrig=(precioOrig-costoReal)*ventasOrig,ganNueva=(nuevoPrecio-nuevoCostoReal)*nuevasVentas,diff=ganNueva-ganOrig;
+  res.style.display='block';
+  res.innerHTML=`
+    <div style="font-size:12px;font-weight:500;color:var(--lav-d);margin-bottom:8px">Resultado del escenario simulado</div>
+    <div class="sim-row"><span>Precio actual</span><span>${fmt(precioOrig)}</span></div>
+    <div class="sim-row"><span>Precio simulado</span><span style="color:var(--lav-d)">${fmt(nuevoPrecio)}</span></div>
+    <div class="sim-row"><span>Nuevo costo por unidad</span><span>${fmt4(nuevoCostoUnit)}</span></div>
+    <div class="sim-row"><span>Nuevo costo real</span><span>${fmt4(nuevoCostoReal)}</span></div>
+    <div class="sim-row"><span>Nuevo margen</span><span style="color:${nuevoMargen>=0.5?'var(--mint-d)':'var(--rose-d)'}">${Math.round(nuevoMargen*100)}%</span></div>
+    <div class="sim-row"><span>Ganancia actual/mes</span><span>${fmt(ganOrig)}</span></div>
+    <div class="sim-row"><span>Ganancia simulada/mes</span><span style="color:var(--lav-d)">${fmt(ganNueva)}</span></div>
+    <div class="sim-row"><span>Diferencia</span><span style="color:${diff>=0?'var(--mint-d)':'#C0392B'}">${diff>=0?'+':''}${fmt(diff)}</span></div>`;
+}
+
+function updateDashboard(){
+  var totalGF=state.gastosFijos.reduce((s,g)=>s+g.monto,0),gfXUnid=getGfXUnid(),totalIngreso=0,totalGanancia=0;
+  state.recetas.forEach((r,i)=>{
+    var margen=state.precios[i]?.margen??0.60,ventas=state.precios[i]?.ventasMes??0,costoReal=r.costoUnit+gfXUnid,precio=costoReal*(1+margen);
+    totalIngreso+=precio*ventas;totalGanancia+=(precio-costoReal)*ventas;
+  });
+  $('kpi-ingreso').textContent=fmt(totalIngreso);$('kpi-ganancia').textContent=fmt(totalGanancia);$('kpi-gastos').textContent=fmt(totalGF);
+  var pct=totalGF>0?Math.min(100,Math.round((totalGanancia/totalGF)*100)):0;
+  $('prog-pct').textContent=pct+'%';$('prog-bar').style.width=pct+'%';$('prog-bar').className='progress-bar'+(pct>=100?' green':'');
+  if(totalGanancia>0&&totalGF>0){
+    if(totalGanancia>=totalGF)$('prog-msg').innerHTML='<span style="color:var(--mint-d);font-weight:500">Eres rentable este mes ✓</span> Tu ganancia cubre todos tus gastos fijos.';
+    else $('prog-msg').textContent='Necesitas '+fmt(totalGF-totalGanancia)+' más en ganancia para cubrir gastos fijos.';
+  }else{$('prog-msg').textContent='Completa recetas y proyección de ventas para ver tu análisis.';}
+  var dl=$('dash-product-list');
+  if(!state.recetas.length){dl.innerHTML='<div class="empty"><div class="empty-icon">🧁</div><div class="empty-text">Ve a Recetas para agregarlas.</div></div>';}
+  else{dl.innerHTML=state.recetas.map((r,i)=>{
+    var margen=state.precios[i]?.margen??0.60,costoReal=r.costoUnit+gfXUnid,precio=costoReal*(1+margen);
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--rose-m)">
+      <div><div style="font-size:13px;font-weight:500">${r.nombre}</div><div style="font-size:11px;color:var(--gray);margin-top:2px">Costo: ${fmt4(r.costoUnit)} · Margen: ${Math.round(margen*100)}%</div></div>
+      <div style="text-align:right"><div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--lav-d)">${fmt(precio)}</div><div style="font-size:11px;color:var(--mint-d)">+${fmt4(precio-costoReal)}/und</div></div>
+    </div>`;}).join('');}
+  var advices=['Tu tiempo es tu activo más valioso. Define tu valor hora y cóbralo en cada receta.','Revisa tus precios cada 3 meses. Los costos suben y tu margen puede reducirse sin que te des cuenta.','El producto con mayor margen es tu estrella. Promociónalo esta semana para maximizar ganancias.','Vender combos aumenta el ticket promedio sin trabajar más horas.','Un cliente fidelizado no requiere inversión en publicidad. Crea un programa de descuentos por compra frecuente.'];
+  $('daily-advice').textContent=advices[new Date().getDay()%advices.length];
+  if(totalGF>0&&totalGanancia>0){
+    if(totalGanancia>=totalGF)$('rentability-advice').innerHTML='<span style="color:var(--mint-d);font-weight:500">Tu negocio es rentable este mes.</span> Ganancia: '+fmt(totalGanancia)+' · Gastos: '+fmt(totalGF);
+    else $('rentability-advice').textContent='Te faltan '+fmt(totalGF-totalGanancia)+' en ganancias para cubrir gastos fijos. Ajusta márgenes en Precios.';
+  }
+}
+
+function saveData(){
+  try{
+    localStorage.setItem('crokan_data',JSON.stringify({
+      ingredientes:state.ingredientes,ayudantes:state.ayudantes,recetas:state.recetas,
+      gastosFijos:state.gastosFijos,manoObra:state.manoObra,precios:state.precios,
+      mo:{meta:$('mo-meta').value,dias:$('mo-dias').value,horas:$('mo-horas').value},
+      prUnidDia:$('pr-unid-dia').value
+    }));showToast('Datos guardados ✓');
+  }catch(e){showToast('Guardado en memoria ✓');}
+}
+
+function loadData(){
+  try{
+    var raw=localStorage.getItem('crokan_data');if(!raw)return;
+    var data=JSON.parse(raw);
+    state.ingredientes=data.ingredientes||[];state.ayudantes=data.ayudantes||[];
+    state.recetas=data.recetas||[];state.gastosFijos=data.gastosFijos||[];
+    state.manoObra=data.manoObra||{meta:0,dias:0,horas:0,valorHora:0};state.precios=data.precios||{};
+    if(data.mo){$('mo-meta').value=data.mo.meta||'';$('mo-dias').value=data.mo.dias||'';$('mo-horas').value=data.mo.horas||'';}
+    if(data.prUnidDia)$('pr-unid-dia').value=data.prUnidDia;
+    renderIngredientes();renderAyudantes();renderRecetas();renderGastos();
+    calcMO();updateDashboard();poblarSimulador();showToast('Datos cargados ✓');
+  }catch(e){}
+}
+
+addIngRow();
+window.addEventListener('load',loadData);
+</script>
+</body>
+</html>
