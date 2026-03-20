@@ -200,16 +200,34 @@ tbody tr:hover td{background:var(--blue-50)}
   .sidebar{display:none}
   .mobile-nav{display:flex}
   .main{padding:1.25rem 1rem 80px}
+  .app-body{flex-direction:column}
+  table{font-size:.76rem}
+  thead th{padding:.5rem .6rem}
+  tbody td{padding:.6rem .6rem}
+  .td-actions{flex-wrap:wrap;gap:.25rem}
+  .btn-xs{padding:.25rem .5rem;font-size:.68rem}
 }
 @media(max-width:600px){
   .kpi-grid{grid-template-columns:1fr 1fr}
   .form-row,.form-row3{grid-template-columns:1fr}
-  .modal{padding:1.25rem;border-radius:16px}
+  .modal{padding:1.25rem;border-radius:16px;max-width:100%!important}
+  .modal-header{margin-bottom:1rem}
   .page-header{flex-direction:column;align-items:flex-start}
-  .hamburger{display:flex}
+  .search-row{flex-direction:column;align-items:stretch}
+  .search-input{max-width:100%!important}
+  .navbar{padding:0 1rem}
+  .nav-logo-name span{display:none}
+  .nav-crm-badge{display:none}
+  .kpi-value{font-size:1.5rem}
+  .table-wrap{border-radius:8px}
+  .card{padding:1rem}
+  .modal-actions{flex-direction:column}
+  .modal-actions .btn{width:100%}
 }
 @media(max-width:380px){
   .kpi-grid{grid-template-columns:1fr}
+  .mnav-label{display:none}
+  .mnav-icon{width:40px;height:40px}
 }
 </style>
 </head>
@@ -308,7 +326,7 @@ tbody tr:hover td{background:var(--blue-50)}
           </div>
           <div id="pedidos-loading"><span class="spinner"></span></div>
           <div id="pedidos-table" class="table-wrap" style="display:none">
-            <table><thead><tr><th>Usuario ID</th><th>Productos</th><th>Total</th><th>Método</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
+            <table><thead><tr><th>Cliente</th><th>Productos</th><th>Total</th><th>Método</th><th>Ref.</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
             <tbody id="pedidos-body"></tbody></table>
           </div>
         </div>
@@ -337,7 +355,7 @@ tbody tr:hover td{background:var(--blue-50)}
         <div class="card">
           <div id="usuarios-loading"><span class="spinner"></span></div>
           <div id="usuarios-table" class="table-wrap" style="display:none">
-            <table><thead><tr><th>Usuario ID</th><th>Fecha registro</th><th>Accesos activos</th><th>Acciones</th></tr></thead>
+            <table><thead><tr><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>País</th><th>Registro</th><th>Accesos</th></tr></thead>
             <tbody id="usuarios-body"></tbody></table>
           </div>
         </div>
@@ -627,10 +645,23 @@ async function loadDashboard(){
 async function loadPedidos(){
   document.getElementById('pedidos-loading').style.display='block';
   document.getElementById('pedidos-table').style.display='none';
-  const { data } = await sb.from('pedidos')
-    .select('*, pedido_items(*, producto:productos(nombre,icono))')
-    .order('created_at',{ascending:false});
-  allPedidos = data||[];
+ 
+  const [pedidosRes, usersRes] = await Promise.all([
+    sb.from('pedidos')
+      .select('*, pedido_items(*, producto:productos(nombre,icono))')
+      .order('created_at',{ascending:false}),
+    sb.rpc('get_users_metadata')
+  ]);
+ 
+  // Construir mapa de usuarios por ID
+  const usersMap = {};
+  (usersRes.data||[]).forEach(u=>{ usersMap[u.id] = u; });
+ 
+  allPedidos = (pedidosRes.data||[]).map(p=>({
+    ...p,
+    _user: usersMap[p.user_id] || null
+  }));
+ 
   document.getElementById('pedidos-loading').style.display='none';
   renderPedidos(allPedidos);
   document.getElementById('pedidos-table').style.display='block';
@@ -638,22 +669,26 @@ async function loadPedidos(){
  
 function renderPedidos(list){
   document.getElementById('pedidos-body').innerHTML = !list.length
-    ? '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">🧾</div><div class="empty-title">Sin pedidos</div></div></td></tr>'
+    ? '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">🧾</div><div class="empty-title">Sin pedidos</div></div></td></tr>'
     : list.map(p=>{
         const prods = p.pedido_items?.map(i=>`${i.producto?.icono||'📦'} ${i.producto?.nombre||'?'}`).join(' · ')||'—';
+        const u = p._user;
+        const nombreCliente = u ? `${u.nombre||''} ${u.apellido||''}`.trim() || u.email : shortId(p.user_id);
+        const ref = p.notas ? p.notas.replace('Referencia (últimos 4 dígitos): ','').trim() : '—';
         return `<tr>
-          <td><span class="td-mono">${shortId(p.user_id)}</span></td>
-          <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${prods}">${prods}</td>
+          <td><div class="td-name" style="font-size:.8rem">${nombreCliente}</div>${u?`<div class="td-email" style="font-size:.7rem">${u.email||''}</div>`:''}</td>
+          <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${prods}">${prods}</td>
           <td style="font-weight:600;color:var(--blue-600)">${fmt(p.total)}</td>
           <td>${metodoPago(p.metodo_pago)}</td>
+          <td style="font-family:monospace;font-size:.8rem;font-weight:600">${ref}</td>
           <td>${estadoBadge(p.estado)}</td>
           <td>${fmtDate(p.created_at)}</td>
           <td><div class="td-actions">
             <button class="btn btn-ghost btn-xs" onclick='verPedido(${JSON.stringify(p).replace(/'/g,"&#39;")})'>Ver</button>
             ${p.estado==='pendiente'?`
-              <button class="btn btn-success btn-xs" onclick="confirmarPedido('${p.id}','${p.user_id}',${JSON.stringify(p.pedido_items).replace(/'/g,"&#39;")})">✓ Confirmar</button>
+              <button class="btn btn-success btn-xs" onclick="confirmarPedido('${p.id}','${p.user_id}',${JSON.stringify(p.pedido_items).replace(/'/g,"&#39;")})">✓</button>
               <button class="btn btn-danger btn-xs" onclick="cancelarPedido('${p.id}')">✕</button>`
-            : p.estado==='confirmado'?`<button class="btn btn-danger btn-xs" onclick="cancelarPedido('${p.id}')">✕ Cancelar</button>`:''}
+            : p.estado==='confirmado'?`<button class="btn btn-danger btn-xs" onclick="cancelarPedido('${p.id}')">Cancelar</button>`:''}
           </div></td>
         </tr>`;
       }).join('');
@@ -662,13 +697,17 @@ function renderPedidos(list){
 function filterPedidos(){
   const q = document.getElementById('search-pedidos').value.toLowerCase();
   const est = document.getElementById('filter-estado').value;
-  renderPedidos(allPedidos.filter(p=>
-    (!q || p.user_id.toLowerCase().includes(q) || p.id.toLowerCase().includes(q)) &&
-    (!est || p.estado===est)
-  ));
+  renderPedidos(allPedidos.filter(p=>{
+    const nombre = p._user ? `${p._user.nombre||''} ${p._user.apellido||''} ${p._user.email||''}`.toLowerCase() : p.user_id;
+    return (!q || nombre.includes(q) || p.id.toLowerCase().includes(q)) && (!est || p.estado===est);
+  }));
 }
  
 function verPedido(p){
+  const u = p._user;
+  const nombreCliente = u ? `${u.nombre||''} ${u.apellido||''}`.trim() || '—' : '—';
+  const ref = p.notas ? p.notas.replace('Referencia (últimos 4 dígitos): ','').trim() : null;
+ 
   const prods = p.pedido_items?.map(i=>`
     <div style="display:flex;align-items:center;gap:.6rem;padding:.5rem 0;border-bottom:1px solid var(--gray-100)">
       <span style="font-size:1.2rem">${i.producto?.icono||'📦'}</span>
@@ -677,36 +716,75 @@ function verPedido(p){
     </div>`).join('')||'<div style="color:var(--gray-400);font-size:.82rem">Sin productos</div>';
  
   document.getElementById('modal-pedido-body').innerHTML=`
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem">
+ 
+    <!-- DATOS DEL CLIENTE -->
+    <div style="background:linear-gradient(135deg,var(--blue-50),var(--pink-50));border-radius:12px;padding:1rem;margin-bottom:1rem;border:1px solid var(--blue-100)">
+      <div style="font-size:.65rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.6rem">Datos del cliente</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+        <div>
+          <div style="font-size:.65rem;color:var(--gray-400);margin-bottom:1px">Nombre</div>
+          <div style="font-size:.85rem;font-weight:600;color:var(--gray-900)">${nombreCliente}</div>
+        </div>
+        <div>
+          <div style="font-size:.65rem;color:var(--gray-400);margin-bottom:1px">Correo</div>
+          <div style="font-size:.82rem;color:var(--gray-700);word-break:break-all">${u?.email||'—'}</div>
+        </div>
+        <div>
+          <div style="font-size:.65rem;color:var(--gray-400);margin-bottom:1px">Teléfono</div>
+          <div style="font-size:.82rem;color:var(--gray-700)">${u?.telefono||'—'}</div>
+        </div>
+        <div>
+          <div style="font-size:.65rem;color:var(--gray-400);margin-bottom:1px">País</div>
+          <div style="font-size:.82rem;color:var(--gray-700)">${u?.pais||'—'}</div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- DATOS DEL PEDIDO -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1rem">
       <div style="background:var(--blue-50);border-radius:10px;padding:.75rem">
-        <div style="font-size:.65rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Total</div>
+        <div style="font-size:.62rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Total</div>
         <div style="font-family:Fraunces,serif;font-size:1.4rem;font-weight:600;color:var(--blue-600)">${fmt(p.total)}</div>
       </div>
       <div style="background:var(--gray-50);border-radius:10px;padding:.75rem">
-        <div style="font-size:.65rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Estado</div>
+        <div style="font-size:.62rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Estado</div>
         <div style="margin-top:4px">${estadoBadge(p.estado)}</div>
       </div>
       <div style="background:var(--gray-50);border-radius:10px;padding:.75rem">
-        <div style="font-size:.65rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Método de pago</div>
+        <div style="font-size:.62rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Método de pago</div>
         <div style="font-size:.83rem;font-weight:600;color:var(--gray-700)">${metodoPago(p.metodo_pago)}</div>
       </div>
       <div style="background:var(--gray-50);border-radius:10px;padding:.75rem">
-        <div style="font-size:.65rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Fecha</div>
+        <div style="font-size:.62rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Referencia (4 dígitos)</div>
+        <div style="font-size:1rem;font-weight:700;font-family:monospace;color:var(--gray-900);letter-spacing:.1em">${ref||'—'}</div>
+      </div>
+      <div style="background:var(--gray-50);border-radius:10px;padding:.75rem;grid-column:1/-1">
+        <div style="font-size:.62rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Fecha del pedido</div>
         <div style="font-size:.83rem;color:var(--gray-700)">${fmtDate(p.created_at)}</div>
       </div>
     </div>
+ 
+    <!-- PRODUCTOS -->
     <div style="font-size:.72rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem">Productos</div>
     <div style="margin-bottom:1rem">${prods}</div>
-    ${p.notas?`<div style="background:var(--blue-50);border-radius:9px;padding:.75rem 1rem;font-size:.82rem;color:var(--gray-700);margin-bottom:1rem"><strong>Notas:</strong> ${p.notas}</div>`:''}
-    ${p.comprobante_url?`
-      <div style="font-size:.72rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem">Comprobante de pago</div>
-      <img src="${p.comprobante_url}" class="comprobante-img" onerror="this.replaceWith(Object.assign(document.createElement('p'),{textContent:'No se pudo cargar la imagen.',style:'color:var(--gray-400);font-size:.8rem'}))">
-    `:'<div style="background:var(--amber-100);border-radius:9px;padding:.7rem 1rem;font-size:.82rem;color:var(--amber-600)">⚠ Sin comprobante adjunto</div>'}
+ 
+    <!-- COMPROBANTE -->
+    ${p.comprobante_url
+      ? `<div style="font-size:.72rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem">Comprobante de pago</div>
+         <img src="${p.comprobante_url}" class="comprobante-img" onerror="this.replaceWith(Object.assign(document.createElement('p'),{textContent:'No se pudo cargar la imagen.',style:'color:var(--gray-400);font-size:.8rem'}))">`
+      : `<div style="background:var(--amber-100);border-radius:9px;padding:.7rem 1rem;font-size:.82rem;color:var(--amber-600)">⚠ Sin comprobante adjunto</div>`}
+ 
+    <!-- ACCIONES -->
     ${p.estado==='pendiente'?`
-    <div style="display:flex;gap:.75rem;margin-top:1.25rem">
-      <button class="btn btn-success" style="flex:1;justify-content:center" onclick="confirmarPedido('${p.id}','${p.user_id}',${JSON.stringify(p.pedido_items).replace(/'/g,"&#39;")});closeModal('modal-pedido')">✓ Confirmar pago y activar acceso</button>
-      <button class="btn btn-danger btn-sm" onclick="cancelarPedido('${p.id}');closeModal('modal-pedido')">✕ Cancelar</button>
-    </div>`:''}`;
+    <div style="display:flex;gap:.75rem;margin-top:1.25rem;flex-wrap:wrap">
+      <button class="btn btn-success" style="flex:1;justify-content:center;min-width:160px" onclick="confirmarPedido('${p.id}','${p.user_id}',${JSON.stringify(p.pedido_items).replace(/'/g,"&#39;")});closeModal('modal-pedido')">✓ Confirmar y activar acceso</button>
+      <button class="btn btn-danger" style="min-width:100px;justify-content:center" onclick="cancelarPedido('${p.id}');closeModal('modal-pedido')">✕ Cancelar</button>
+    </div>`
+    : p.estado==='confirmado'?`
+    <div style="margin-top:1.25rem">
+      <button class="btn btn-danger btn-sm" onclick="cancelarPedido('${p.id}');closeModal('modal-pedido')">✕ Revertir confirmación</button>
+    </div>`:''
+    }`;
   openModal('modal-pedido');
 }
  
@@ -780,24 +858,30 @@ async function darAccesoManual(){
 async function loadUsuarios(){
   document.getElementById('usuarios-loading').style.display='block';
   document.getElementById('usuarios-table').style.display='none';
-  const { data } = await sb.from('accesos')
-    .select('user_id, otorgado_en')
-    .eq('activo',true)
-    .order('otorgado_en',{ascending:false});
-  const map={};
-  (data||[]).forEach(a=>{
-    if(!map[a.user_id]) map[a.user_id]={user_id:a.user_id,fecha:a.otorgado_en,count:0};
-    map[a.user_id].count++;
+ 
+  const [usersRes, accesosRes] = await Promise.all([
+    sb.rpc('get_users_metadata'),
+    sb.from('accesos').select('user_id').eq('activo',true)
+  ]);
+ 
+  const users = usersRes.data||[];
+  const accesosMap = {};
+  (accesosRes.data||[]).forEach(a=>{
+    accesosMap[a.user_id] = (accesosMap[a.user_id]||0)+1;
   });
-  const users = Object.values(map);
+ 
   document.getElementById('usuarios-loading').style.display='none';
   document.getElementById('usuarios-body').innerHTML = !users.length
-    ? '<tr><td colspan="4"><div class="empty-state"><div class="empty-icon">👥</div><div class="empty-title">Sin usuarias aún</div></div></td></tr>'
+    ? '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">👥</div><div class="empty-title">Sin usuarias aún</div></div></td></tr>'
     : users.map(u=>`<tr>
-        <td class="td-mono" style="font-size:.75rem">${u.user_id}</td>
-        <td>${fmtDate(u.fecha)}</td>
-        <td><span class="badge badge-blue">${u.count} acceso${u.count!==1?'s':''}</span></td>
-        <td><button class="btn btn-ghost btn-xs" onclick="navigator.clipboard.writeText('${u.user_id}');notif('ID copiado ✓','success')">Copiar ID</button></td>
+        <td><div class="td-name">${[u.nombre,u.apellido].filter(Boolean).join(' ')||'—'}</div></td>
+        <td class="td-email">${u.email||'—'}</td>
+        <td style="font-size:.8rem;color:var(--gray-700)">${u.telefono||'—'}</td>
+        <td style="font-size:.8rem;color:var(--gray-700)">${u.pais||'—'}</td>
+        <td style="font-size:.78rem;color:var(--gray-400)">${fmtDate(u.created_at)}</td>
+        <td>${accesosMap[u.id]
+          ? `<span class="badge badge-blue">${accesosMap[u.id]} acceso${accesosMap[u.id]!==1?'s':''}</span>`
+          : '<span class="badge badge-gray">Sin accesos</span>'}</td>
       </tr>`).join('');
   document.getElementById('usuarios-table').style.display='block';
 }
