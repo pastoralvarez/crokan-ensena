@@ -264,6 +264,16 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#f4f8ff;color:#0f172a
           <label>Notas adicionales (opcional)</label>
           <textarea class="fi" id="notas-inp" rows="2" placeholder="Cualquier información adicional..."></textarea>
         </div>
+ 
+        <!-- CUPÓN -->
+        <div style="display:flex;gap:.6rem;align-items:flex-end;margin-bottom:.9rem">
+          <div style="flex:1">
+            <label style="display:block;font-size:.7rem;font-weight:700;color:#334155;margin-bottom:.3rem;letter-spacing:.03em">Cupón de descuento (opcional)</label>
+            <input id="cupon-inp" type="text" class="fi" placeholder="Ej: BIENVENIDA20" style="text-transform:uppercase;letter-spacing:.08em;font-weight:600">
+          </div>
+          <button onclick="aplicarCupon()" style="background:var(--blue-50,#eff6ff);border:1.5px solid var(--blue-200,#bfdbfe);border-radius:9px;padding:.65rem 1rem;font-size:.8rem;font-weight:700;color:#2563eb;cursor:pointer;font-family:inherit;white-space:nowrap">Aplicar</button>
+        </div>
+        <div id="cupon-msg" style="display:none;font-size:.78rem;border-radius:8px;padding:.55rem .9rem;margin-bottom:.75rem"></div>
         <div class="total-caja" id="total-caja">
           <span>Total a pagar</span>
           <span class="total-num" id="total-num">$0 USD</span>
@@ -329,6 +339,7 @@ const sb=supabase.createClient(SB_URL,SB_KEY);
 let usuario=null;
 let prodsSeleccionados=[];
 let metodoSel='';
+let cuponAplicado=null;
  
 const pagos={
   binance:'🟡 <strong>Binance Pay:</strong> ID <strong>TU-ID-AQUI</strong>. Guarda el ID de transacción.',
@@ -511,10 +522,41 @@ function toggleProd(id,precio){
   actualizarTotal();
 }
  
+async function aplicarCupon(){
+  const codigo = document.getElementById('cupon-inp').value.trim().toUpperCase();
+  const msg = document.getElementById('cupon-msg');
+  if(!codigo){ msg.style.display='none'; cuponAplicado=null; actualizarTotal(); return; }
+  const {data,error} = await sb.from('cupones').select('*').eq('codigo',codigo).eq('activo',true).single();
+  if(error||!data){
+    msg.style.cssText='display:block;background:#fee2e2;color:#dc2626;font-size:.78rem;border-radius:8px;padding:.55rem .9rem;margin-bottom:.75rem';
+    msg.textContent='❌ Cupón inválido o inactivo.';
+    cuponAplicado=null; actualizarTotal(); return;
+  }
+  if(data.usos_max && data.usos_actuales >= data.usos_max){
+    msg.style.cssText='display:block;background:#fee2e2;color:#dc2626;font-size:.78rem;border-radius:8px;padding:.55rem .9rem;margin-bottom:.75rem';
+    msg.textContent='❌ Este cupón ya alcanzó el límite de usos.';
+    cuponAplicado=null; actualizarTotal(); return;
+  }
+  cuponAplicado=data;
+  msg.style.cssText='display:block;background:#dcfce7;color:#15803d;font-size:.78rem;border-radius:8px;padding:.55rem .9rem;margin-bottom:.75rem';
+  msg.textContent=`✓ Cupón aplicado: ${data.porcentaje}% de descuento`;
+  actualizarTotal();
+}
+ 
 function actualizarTotal(){
-  const total=prodsSeleccionados.reduce((s,p)=>s+p.precio,0);
-  document.getElementById('total-num').textContent=dinero(total)+' USD';
-  document.getElementById('total-caja').style.display=prodsSeleccionados.length?'flex':'none';
+  const subtotal=prodsSeleccionados.reduce((s,p)=>s+p.precio,0);
+  let total=subtotal;
+  if(cuponAplicado) total=subtotal*(1-cuponAplicado.porcentaje/100);
+  const wrap=document.getElementById('total-caja');
+  const numEl=document.getElementById('total-num');
+  if(prodsSeleccionados.length){
+    let txt=dinero(total)+' USD';
+    if(cuponAplicado) txt=`<span style="text-decoration:line-through;color:#94a3b8;font-size:.85rem">${dinero(subtotal)}</span> ${dinero(total)} USD`;
+    numEl.innerHTML=txt;
+    wrap.style.display='flex';
+  } else {
+    wrap.style.display='none';
+  }
 }
  
 function selMetodo(el,metodo){
@@ -532,19 +574,39 @@ async function enviarPedido(){
   const btn=document.getElementById('btn-enviar');
   btn.disabled=true;btn.textContent='Enviando...';
   const total=prodsSeleccionados.reduce((s,p)=>s+p.precio,0);
+  const descuento=cuponAplicado ? total*(cuponAplicado.porcentaje/100) : 0;
+  const totalFinal=total-descuento;
   const ref=document.getElementById('ref-inp').value.trim();
   const notas=[ref?`Referencia (últimos 4 dígitos): ${ref}`:'',document.getElementById('notas-inp').value.trim()].filter(Boolean).join(' | ');
   const{data:pedido,error}=await sb.from('pedidos').insert([{
-    user_id:usuario.id,total,estado:'pendiente',metodo_pago:metodoSel,notas:notas||null
+    user_id:usuario.id,
+    total:totalFinal,
+    estado:'pendiente',
+    metodo_pago:metodoSel,
+    notas:notas||null,
+    cupon_codigo:cuponAplicado?.codigo||null,
+    descuento:descuento||0
   }]).select().single();
   if(error){btn.disabled=false;btn.textContent='Enviar pedido';notif('Error al enviar.','error');return;}
   await sb.from('pedido_items').insert(prodsSeleccionados.map(p=>({pedido_id:pedido.id,producto_id:p.id,precio:p.precio})));
+ 
+  // Notificar a Andrea del nuevo pedido
+  try {
+    const meta = usuario.user_metadata||{};
+    const nombreCliente = [meta.nombre,meta.apellido].filter(Boolean).join(' ')||usuario.email;
+    const prodsTexto = prodsSeleccionados.map(p=>{
+      const prod = document.querySelector(`#p-${p.id} div div:first-child`);
+      return prod?.textContent||'Producto';
+    }).join(', ');
+    await notificarPedidoNuevo(pedido, usuario.email, nombreCliente, prodsTexto);
+  } catch(e){ console.warn('Notif no enviada:',e); }
   btn.disabled=false;btn.textContent='Enviar pedido';
-  prodsSeleccionados=[];metodoSel='';
+  prodsSeleccionados=[];metodoSel='';cuponAplicado=null;
   document.querySelectorAll('.met-btn').forEach(b=>b.classList.remove('sel'));
-  ['instr-caja','ref-caja','total-caja'].forEach(id=>document.getElementById(id).style.display='none');
+  ['instr-caja','ref-caja','total-caja','cupon-msg'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('ref-inp').value='';
   document.getElementById('notas-inp').value='';
+  document.getElementById('cupon-inp').value='';
   notif('¡Pedido enviado! Te avisamos por correo cuando se confirme 🎉','success');
   setTimeout(()=>irA('pedidos'),1800);
 }
@@ -576,6 +638,52 @@ async function cambiarPass(){
   notif('Contraseña actualizada ✓','success');
   document.getElementById('p-p1').value='';
   document.getElementById('p-p2').value='';
+}
+ 
+// ── NOTIFICAR A ANDREA PEDIDO NUEVO ──
+async function notificarPedidoNuevo(pedido, userEmail, userName, productos){
+  const metLabel=m=>({binance:'Binance Pay',pago_movil:'Pago Móvil',davivienda:'Davivienda',bancolombia:'Bancolombia'}[m]||m||'—');
+  try {
+    await fetch('https://api.resend.com/emails',{
+      method:'POST',
+      headers:{'Authorization':'Bearer re_VtTxTbxA_5MrqQCBuXt7Pu9CdpfLRdFX7','Content-Type':'application/json'},
+      body:JSON.stringify({
+        from:'Crokan enseña <onboarding@resend.dev>',
+        to:['alvarez261093@gmail.com'],
+        subject:`🛒 Nuevo pedido de ${userName} — $${parseFloat(pedido.total).toFixed(2)} USD`,
+        html:`<div style="font-family:sans-serif;background:#f4f8ff;padding:30px 20px">
+          <div style="max-width:480px;margin:0 auto;background:white;border-radius:16px;padding:26px;border:1px solid #dbeafe">
+            <div style="background:linear-gradient(135deg,#1d4ed8,#ec4899);border-radius:10px;padding:12px 16px;margin-bottom:18px;text-align:center">
+              <span style="font-size:18px">🛒</span>
+              <span style="font-family:Georgia,serif;font-size:15px;font-weight:600;color:white;margin-left:8px">Nuevo pedido — Crokan enseña</span>
+            </div>
+            <div style="background:#eff6ff;border-radius:10px;padding:12px 14px;margin-bottom:10px">
+              <div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Cliente</div>
+              <div style="font-size:14px;font-weight:600;color:#1d4ed8">${userName}</div>
+              <div style="font-size:12px;color:#64748b">${userEmail}</div>
+            </div>
+            <div style="background:#fdf2f8;border-radius:10px;padding:12px 14px;margin-bottom:10px">
+              <div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Productos</div>
+              <div style="font-size:13px;font-weight:600;color:#db2777">${productos}</div>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:18px">
+              <div style="flex:1;background:#f8faff;border-radius:9px;padding:10px;text-align:center">
+                <div style="font-size:10px;color:#94a3b8;margin-bottom:2px">Total</div>
+                <div style="font-family:Georgia,serif;font-size:1.2rem;font-weight:600;color:#2563eb">$${parseFloat(pedido.total).toFixed(2)}</div>
+              </div>
+              <div style="flex:1;background:#f8faff;border-radius:9px;padding:10px;text-align:center">
+                <div style="font-size:10px;color:#94a3b8;margin-bottom:2px">Método</div>
+                <div style="font-size:12px;font-weight:600;color:#334155">${metLabel(pedido.metodo_pago)}</div>
+              </div>
+            </div>
+            <div style="text-align:center">
+              <a href="https://crokan-ensena.vercel.app/crokan-crm.html" style="background:linear-gradient(135deg,#2563eb,#3b82f6);color:white;padding:11px 24px;border-radius:9px;text-decoration:none;font-size:13px;font-weight:700">Ver en el CRM →</a>
+            </div>
+          </div>
+        </div>`
+      })
+    });
+  } catch(e){ console.warn('Notif no enviada:',e); }
 }
  
 // ── INIT ──
