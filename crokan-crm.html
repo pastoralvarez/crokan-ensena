@@ -275,6 +275,7 @@ tbody tr:hover td{background:var(--blue-50)}
       <div class="nav-item" onclick="goTo('usuarios')" id="nav-usuarios"><span class="nav-icon">👥</span>Usuarias</div>
       <div class="sidebar-section">Catálogo</div>
       <div class="nav-item" onclick="goTo('productos')" id="nav-productos"><span class="nav-icon">📦</span>Productos</div>
+      <div class="nav-item" onclick="goTo('cupones')" id="nav-cupones"><span class="nav-icon">🎟️</span>Cupones</div>
       <div class="sidebar-section">Marketing</div>
       <div class="nav-item" onclick="goTo('waitlist')" id="nav-waitlist"><span class="nav-icon">📋</span>Lista de espera</div>
     </aside>
@@ -391,6 +392,23 @@ tbody tr:hover td{background:var(--blue-50)}
         </div>
       </div>
  
+      <!-- ══ CUPONES ══ -->
+      <div class="page" id="page-cupones">
+        <div class="page-header">
+          <div><div class="page-title">Cupones de descuento</div><div class="page-sub">Crea códigos de descuento para tus alumnas</div></div>
+          <button class="btn btn-primary" onclick="openModal('modal-cupon')">+ Nuevo cupón</button>
+        </div>
+        <div class="card">
+          <div id="cupones-loading"><span class="spinner"></span></div>
+          <div id="cupones-table" class="table-wrap" style="display:none">
+            <table>
+              <thead><tr><th>Código</th><th>Descuento</th><th>Usos</th><th>Estado</th><th>Creado</th><th>Acciones</th></tr></thead>
+              <tbody id="cupones-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+ 
     </main>
   </div>
  
@@ -412,9 +430,9 @@ tbody tr:hover td{background:var(--blue-50)}
       <div class="mnav-icon">📦</div>
       <span class="mnav-label">Productos</span>
     </button>
-    <button class="mnav-item" onclick="goTo('waitlist')" id="mnav-waitlist">
-      <div class="mnav-icon">📋</div>
-      <span class="mnav-label">Espera</span>
+    <button class="mnav-item" onclick="goTo('cupones')" id="mnav-cupones">
+      <div class="mnav-icon">🎟️</div>
+      <span class="mnav-label">Cupones</span>
     </button>
   </nav>
  
@@ -483,19 +501,60 @@ tbody tr:hover td{background:var(--blue-50)}
       <div class="form-group"><label>Duración total</label><input class="fi" id="prod-duracion" placeholder="Ej: 8h"></div>
     </div>
     <div class="form-group">
+      <label>URL de imagen del curso</label>
+      <input class="fi" id="prod-imagen" placeholder="https://... (imagen de portada del curso)">
+      <div style="font-size:.71rem;color:var(--gray-400);margin-top:4px">Sube la imagen a cualquier servicio (Google Drive, Imgur, etc.) y pega el enlace directo aquí.</div>
+    </div>
+    <div class="form-group">
       <label>Módulos del curso <span style="font-weight:400;color:var(--gray-400)">(uno por línea)</span></label>
-      <textarea class="fi" id="prod-modulos" rows="7" placeholder="Ingredientes y equipos esenciales
+      <textarea class="fi" id="prod-modulos" rows="6" placeholder="Ingredientes y equipos esenciales
 Bizcocho húmedo perfecto
 Buttercream americano clásico
 Técnicas básicas de manga
 Rosas y flores con boquilla
-Decoración con sprinkles
 Empaque y presentación para ventas"></textarea>
-      <div style="font-size:.71rem;color:var(--gray-400);margin-top:4px">Escribe cada módulo en una línea separada. Aparecerán en el modal del curso en el frontend.</div>
+      <div style="font-size:.71rem;color:var(--gray-400);margin-top:4px">Cada línea es un módulo. Aparecerán en el detalle del curso en el frontend.</div>
     </div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal('modal-producto')">Cancelar</button>
       <button class="btn btn-primary" onclick="guardarProducto()">Guardar producto</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- MODAL: Cupón -->
+<div class="modal-bg" id="modal-cupon">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-cupon-title">Nuevo cupón</div>
+      <button class="modal-close" onclick="closeModal('modal-cupon')">✕</button>
+    </div>
+    <input type="hidden" id="cupon-edit-id">
+    <div class="form-group">
+      <label>Código del cupón</label>
+      <input class="fi" id="cupon-codigo" placeholder="Ej: BIENVENIDA20" style="text-transform:uppercase;font-weight:700;letter-spacing:.08em">
+      <div style="font-size:.71rem;color:var(--gray-400);margin-top:4px">Solo letras y números, sin espacios. Se convierte automáticamente a mayúsculas.</div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Porcentaje de descuento (%)</label>
+        <input class="fi" id="cupon-porcentaje" type="number" min="1" max="100" placeholder="Ej: 20">
+      </div>
+      <div class="form-group">
+        <label>Usos máximos (vacío = ilimitado)</label>
+        <input class="fi" id="cupon-usos" type="number" min="1" placeholder="Ej: 50">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Estado</label>
+      <select class="fi" id="cupon-activo">
+        <option value="true">Activo</option>
+        <option value="false">Inactivo</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-cupon')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarCupon()">Guardar cupón</button>
     </div>
   </div>
 </div>
@@ -575,7 +634,7 @@ function goTo(page){
   document.getElementById('page-'+page)?.classList.add('active');
   document.getElementById('nav-'+page)?.classList.add('active');
   document.getElementById('mnav-'+page)?.classList.add('active');
-  const loaders={pedidos:loadPedidos,accesos:loadAccesos,usuarios:loadUsuarios,productos:loadProductos,waitlist:loadWaitlist};
+  const loaders={pedidos:loadPedidos,accesos:loadAccesos,usuarios:loadUsuarios,productos:loadProductos,waitlist:loadWaitlist,cupones:loadCupones};
   if(loaders[page]) loaders[page]();
 }
  
@@ -1075,7 +1134,7 @@ async function loadProductos(){
 function abrirModalProducto(){
   document.getElementById('modal-prod-title').textContent='Nuevo producto';
   document.getElementById('prod-edit-id').value='';
-  ['prod-nombre','prod-icono','prod-desc','prod-precio','prod-clases','prod-duracion','prod-modulos'].forEach(id=>document.getElementById(id).value='');
+  ['prod-nombre','prod-icono','prod-desc','prod-precio','prod-clases','prod-duracion','prod-modulos','prod-imagen'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('prod-tipo').value='curso';
   document.getElementById('prod-activo').value='true';
   openModal('modal-producto');
@@ -1093,6 +1152,7 @@ function editarProducto(p){
   document.getElementById('prod-clases').value=p.num_clases||'';
   document.getElementById('prod-duracion').value=p.duracion||'';
   document.getElementById('prod-modulos').value=p.modulos||'';
+  document.getElementById('prod-imagen').value=p.imagen_url||'';
   openModal('modal-producto');
 }
  
@@ -1111,6 +1171,7 @@ async function guardarProducto(){
     num_clases:  document.getElementById('prod-clases').value.trim(),
     duracion:    document.getElementById('prod-duracion').value.trim(),
     modulos:     document.getElementById('prod-modulos').value.trim(),
+    imagen_url:  document.getElementById('prod-imagen').value.trim(),
   };
   const { error } = id
     ? await sb.from('productos').update(payload).eq('id',id)
@@ -1137,6 +1198,118 @@ async function loadWaitlist(){
     ? '<tr><td colspan="2"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Sin correos aún</div></div></td></tr>'
     : data.map(w=>`<tr><td class="td-email">${w.email}</td><td>${fmtDate(w.created_at)}</td></tr>`).join('');
   document.getElementById('waitlist-table').style.display='block';
+}
+ 
+// ─── CUPONES ───
+async function loadCupones(){
+  document.getElementById('cupones-loading').style.display='block';
+  document.getElementById('cupones-table').style.display='none';
+  const { data } = await sb.from('cupones').select('*').order('created_at',{ascending:false});
+  document.getElementById('cupones-loading').style.display='none';
+  document.getElementById('cupones-body').innerHTML = !data?.length
+    ? '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">🎟️</div><div class="empty-title">Sin cupones aún</div><div class="empty-desc">Crea tu primer cupón de descuento.</div></div></td></tr>'
+    : data.map(c=>`<tr>
+        <td><span style="font-family:monospace;font-size:.85rem;font-weight:700;color:var(--blue-700);background:var(--blue-50);padding:3px 10px;border-radius:6px;letter-spacing:.06em">${c.codigo}</span></td>
+        <td><span style="font-size:1rem;font-weight:700;color:var(--pink-600)">${c.porcentaje}%</span></td>
+        <td style="font-size:.82rem;color:var(--gray-500)">${c.usos_actuales}${c.usos_max?` / ${c.usos_max}`:' / ∞'}</td>
+        <td>${c.activo?'<span class="badge badge-green">Activo</span>':'<span class="badge badge-gray">Inactivo</span>'}</td>
+        <td>${fmtDate(c.created_at)}</td>
+        <td><div class="td-actions">
+          <button class="btn btn-ghost btn-xs" onclick='editarCupon(${JSON.stringify(c).replace(/'/g,"&#39;")})'>Editar</button>
+          <button class="btn btn-xs ${c.activo?'btn-danger':'btn-success'}" onclick="toggleCupon('${c.id}',${!c.activo})">${c.activo?'Desactivar':'Activar'}</button>
+        </div></td>
+      </tr>`).join('');
+  document.getElementById('cupones-table').style.display='block';
+}
+ 
+function editarCupon(c){
+  document.getElementById('modal-cupon-title').textContent='Editar cupón';
+  document.getElementById('cupon-edit-id').value=c.id;
+  document.getElementById('cupon-codigo').value=c.codigo||'';
+  document.getElementById('cupon-porcentaje').value=c.porcentaje||'';
+  document.getElementById('cupon-usos').value=c.usos_max||'';
+  document.getElementById('cupon-activo').value=String(c.activo);
+  openModal('modal-cupon');
+}
+ 
+async function guardarCupon(){
+  const id         = document.getElementById('cupon-edit-id').value;
+  const codigo     = document.getElementById('cupon-codigo').value.trim().toUpperCase().replace(/\s/g,'');
+  const porcentaje = parseFloat(document.getElementById('cupon-porcentaje').value);
+  const usosMax    = document.getElementById('cupon-usos').value.trim();
+  if(!codigo){ notif('Escribe un código para el cupón.','error'); return; }
+  if(!porcentaje||porcentaje<=0||porcentaje>100){ notif('El porcentaje debe ser entre 1 y 100.','error'); return; }
+  const payload={
+    codigo,
+    porcentaje,
+    usos_max: usosMax ? parseInt(usosMax) : null,
+    activo: document.getElementById('cupon-activo').value==='true',
+  };
+  const { error } = id
+    ? await sb.from('cupones').update(payload).eq('id',id)
+    : await sb.from('cupones').insert([payload]);
+  if(error){
+    const msg = error.message.includes('unique') ? 'Ese código ya existe. Elige otro.' : error.message;
+    notif('Error: '+msg,'error'); return;
+  }
+  notif(id?'Cupón actualizado ✓':'Cupón creado ✓','success');
+  document.getElementById('cupon-edit-id').value='';
+  document.getElementById('modal-cupon-title').textContent='Nuevo cupón';
+  closeModal('modal-cupon');
+  loadCupones();
+}
+ 
+async function toggleCupon(id, activo){
+  await sb.from('cupones').update({activo}).eq('id',id);
+  notif(activo?'Cupón activado ✓':'Cupón desactivado.', activo?'success':'info');
+  loadCupones();
+}
+ 
+// ─── NOTIFICACIÓN PEDIDO NUEVO (a Andrea) ───
+async function notificarPedidoNuevo(pedido, userEmail, userName, productos){
+  const html=`<!DOCTYPE html><html><body style="font-family:sans-serif;background:#f4f8ff;padding:30px 20px">
+  <div style="max-width:500px;margin:0 auto;background:white;border-radius:16px;padding:28px;border:1px solid #dbeafe;box-shadow:0 4px 20px rgba(59,130,246,.1)">
+    <div style="background:linear-gradient(135deg,#1d4ed8,#ec4899);border-radius:10px;padding:14px 18px;margin-bottom:20px;text-align:center">
+      <span style="font-size:20px">🛒</span>
+      <span style="font-family:Georgia,serif;font-size:16px;font-weight:600;color:white;margin-left:8px">Nuevo pedido en Crokan enseña</span>
+    </div>
+    <p style="font-size:15px;color:#334155;margin-bottom:16px">Tienes un nuevo pedido pendiente de confirmación.</p>
+    <div style="background:#eff6ff;border-radius:10px;padding:14px 16px;margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Cliente</div>
+      <div style="font-size:14px;font-weight:600;color:#1d4ed8">${userName}</div>
+      <div style="font-size:13px;color:#64748b">${userEmail}</div>
+    </div>
+    <div style="background:#fdf2f8;border-radius:10px;padding:14px 16px;margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Productos</div>
+      <div style="font-size:14px;font-weight:600;color:#db2777">${productos}</div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <div style="flex:1;background:#f8faff;border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:11px;color:#94a3b8;margin-bottom:3px">Total</div>
+        <div style="font-family:Georgia,serif;font-size:1.3rem;font-weight:600;color:#2563eb">$${parseFloat(pedido.total).toFixed(2)}</div>
+      </div>
+      <div style="flex:1;background:#f8faff;border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:11px;color:#94a3b8;margin-bottom:3px">Método</div>
+        <div style="font-size:13px;font-weight:600;color:#334155">${metodoPago(pedido.metodo_pago)}</div>
+      </div>
+    </div>
+    <div style="margin-top:20px;text-align:center">
+      <a href="https://crokan-ensena.vercel.app/crokan-crm.html" style="background:linear-gradient(135deg,#2563eb,#3b82f6);color:white;padding:12px 28px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:700">Ver pedido en el CRM →</a>
+    </div>
+  </div>
+  </body></html>`;
+  try {
+    await fetch('https://api.resend.com/emails',{
+      method:'POST',
+      headers:{'Authorization':'Bearer re_VtTxTbxA_5MrqQCBuXt7Pu9CdpfLRdFX7','Content-Type':'application/json'},
+      body:JSON.stringify({
+        from:'Crokan enseña <onboarding@resend.dev>',
+        to:['alvarez261093@gmail.com'],
+        subject:`🛒 Nuevo pedido de ${userName} — $${parseFloat(pedido.total).toFixed(2)} USD`,
+        html
+      })
+    });
+  } catch(e){ console.warn('Notif no enviada:',e); }
 }
  
 // ─── CERRAR MODALES AL CLICKAR FUERA ───
