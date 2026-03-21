@@ -801,12 +801,140 @@ function verPedido(p){
 async function confirmarPedido(pedidoId, userId, items){
   const { error } = await sb.from('pedidos').update({estado:'confirmado'}).eq('id',pedidoId);
   if(error){ notif('Error al confirmar pedido.','error'); return; }
+ 
   if(items?.length){
     const acc = items.map(i=>({user_id:userId,producto_id:i.producto_id,pedido_id:pedidoId,activo:true}));
     await sb.from('accesos').upsert(acc,{onConflict:'user_id,producto_id'});
   }
-  notif('✓ Pago confirmado y acceso activado.','success');
+ 
+  // Enviar correo de confirmación
+  try {
+    const { data: users } = await sb.rpc('get_users_metadata');
+    const user = (users||[]).find(u=>u.id===userId);
+    if(user?.email){
+      const nombre = [user.nombre,user.apellido].filter(Boolean).join(' ') || user.email.split('@')[0];
+      const productos = items?.map(i=>`${i.producto?.icono||'📦'} ${i.producto?.nombre||'Producto'}`).join('<br>') || '—';
+      await enviarCorreoConfirmacion(user.email, nombre, productos);
+    }
+  } catch(e){ console.warn('Correo no enviado:', e); }
+ 
+  notif('✓ Pago confirmado, acceso activado y correo enviado.','success');
   loadPedidos(); loadDashboard();
+}
+ 
+async function enviarCorreoConfirmacion(email, nombre, productos){
+  const html = `<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f4f8ff;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f8ff;padding:40px 20px">
+  <tr><td align="center">
+    <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px">
+ 
+      <!-- LOGO -->
+      <tr><td align="center" style="padding-bottom:24px">
+        <table cellpadding="0" cellspacing="0">
+          <tr><td style="background:linear-gradient(135deg,#1d4ed8,#2563eb,#ec4899);border-radius:14px;padding:12px 22px;text-align:center">
+            <span style="font-size:22px">🎂</span>
+            <span style="font-family:Georgia,serif;font-size:17px;font-weight:600;color:white;vertical-align:middle;margin-left:8px">Crokan enseña</span>
+            <div style="font-size:11px;color:rgba(255,255,255,0.75);margin-top:2px">by Andrea V.</div>
+          </td></tr>
+        </table>
+      </td></tr>
+ 
+      <!-- CARD -->
+      <tr><td style="background:white;border-radius:20px;box-shadow:0 4px 24px rgba(59,130,246,0.1);border:1px solid #dbeafe;overflow:hidden">
+ 
+        <!-- BARRA SUPERIOR -->
+        <tr><td style="background:linear-gradient(135deg,#2563eb,#ec4899);height:5px;font-size:0;line-height:0">&nbsp;</td></tr>
+ 
+        <tr><td style="padding:40px 40px 32px">
+ 
+          <!-- ÍCONO -->
+          <div style="text-align:center;margin-bottom:24px">
+            <div style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#dcfce7,#a7f3d0);display:inline-block;line-height:68px;text-align:center;font-size:32px">
+              🎉
+            </div>
+          </div>
+ 
+          <!-- TÍTULO -->
+          <h1 style="font-family:Georgia,serif;font-size:26px;font-weight:600;color:#0f172a;text-align:center;margin:0 0 8px">
+            ¡Tu acceso está listo, ${nombre}!
+          </h1>
+          <p style="font-size:15px;color:#64748b;text-align:center;margin:0 0 28px;line-height:1.6">
+            Hemos confirmado tu pago. Ya puedes acceder a tu contenido en Crokan enseña.
+          </p>
+ 
+          <!-- DIVISOR -->
+          <div style="height:1px;background:linear-gradient(90deg,transparent,#dbeafe,transparent);margin-bottom:24px"></div>
+ 
+          <!-- PRODUCTOS -->
+          <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:18px 20px;margin-bottom:28px">
+            <div style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">Productos activados</div>
+            <div style="font-size:15px;font-weight:600;color:#1d4ed8;line-height:1.8">${productos}</div>
+          </div>
+ 
+          <!-- BOTÓN -->
+          <div style="text-align:center;margin-bottom:28px">
+            <a href="https://crokan-ensena.vercel.app/mi-escuela.html"
+               style="display:inline-block;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:white;text-decoration:none;font-size:16px;font-weight:700;padding:16px 36px;border-radius:12px;box-shadow:0 4px 16px rgba(37,99,235,0.35)">
+              Ir a mi biblioteca →
+            </a>
+          </div>
+ 
+          <!-- INFO -->
+          <div style="background:#fdf2f8;border:1px solid #fbcfe8;border-radius:12px;padding:16px 20px;margin-bottom:24px">
+            <p style="font-size:13px;color:#db2777;margin:0;line-height:1.7">
+              <strong>¿Necesitas ayuda?</strong><br>
+              Responde este correo o escríbenos directamente. Estamos aquí para acompañarte en cada paso.
+            </p>
+          </div>
+ 
+          <!-- DIVISOR -->
+          <div style="height:1px;background:linear-gradient(90deg,transparent,#fce7f3,transparent);margin-bottom:20px"></div>
+ 
+          <p style="font-size:12px;color:#94a3b8;text-align:center;margin:0;line-height:1.7">
+            Este correo fue enviado porque adquiriste un producto en<br>
+            <strong style="color:#64748b">Crokan enseña by Andrea V.</strong>
+          </p>
+ 
+        </td></tr>
+ 
+        <!-- FOOTER CARD -->
+        <tr><td style="background:#f8fafc;border-top:1px solid #dbeafe;padding:18px 40px;text-align:center">
+          <p style="font-size:12px;color:#94a3b8;margin:0">
+            🎂 Crokan enseña by Andrea V. — Hecho con amor desde Venezuela
+          </p>
+        </td></tr>
+ 
+      </td></tr>
+ 
+      <!-- FOOTER -->
+      <tr><td style="padding-top:20px;text-align:center">
+        <p style="font-size:11px;color:#94a3b8;margin:0">
+          <a href="https://crokan-ensena.vercel.app" style="color:#3b82f6;text-decoration:none">crokan-ensena.vercel.app</a>
+        </p>
+      </td></tr>
+ 
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>`;
+ 
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer re_VtTxTbxA_5MrqQCBuXt7Pu9CdpfLRdFX7',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      from: 'Crokan enseña by Andrea V. <onboarding@resend.dev>',
+      to: [email],
+      subject: '¡Tu acceso está listo! 🎉 — Crokan enseña by Andrea V.',
+      html
+    })
+  });
 }
  
 async function cancelarPedido(pedidoId){
