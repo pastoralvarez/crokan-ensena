@@ -133,6 +133,62 @@ select.field-input{cursor:pointer}
 </style>
 </head>
 <body>
+<!-- PROTECCIÓN DE ACCESO -->
+<div id="gate-herramienta" style="display:none;position:fixed;inset:0;background:#f4f8ff;z-index:9999;align-items:center;justify-content:center;padding:1.5rem">
+  <div style="background:white;border-radius:20px;padding:2.5rem 2rem;max-width:400px;width:100%;text-align:center;box-shadow:0 6px 28px rgba(59,130,246,.13);border:1px solid #dbeafe">
+    <div style="font-size:2.8rem;margin-bottom:1rem" id="gate-icon">⏳</div>
+    <div style="font-family:Georgia,serif;font-size:1.4rem;font-weight:600;color:#0f172a;margin-bottom:.5rem" id="gate-titulo">Verificando acceso...</div>
+    <p style="font-size:.88rem;color:#64748b;margin-bottom:1.5rem;line-height:1.6" id="gate-desc">Un momento por favor.</p>
+    <a id="gate-btn" href="index.html" style="display:none;background:linear-gradient(135deg,#2563eb,#3b82f6);color:white;padding:.75rem 1.5rem;border-radius:11px;font-size:.9rem;font-weight:700;text-decoration:none;font-family:sans-serif">Ir al inicio</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(async function verificarAcceso(){
+  const gate = document.getElementById('gate-herramienta');
+  gate.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+
+  const SB_URL = 'https://gjtucszugkbyuxemtmxj.supabase.co';
+  const SB_KEY = 'sb_publishable_pF3-mN98CnjTPvzHXXLANQ_2VHWX2vm';
+  const sb = supabase.createClient(SB_URL, SB_KEY);
+
+  function bloquear(titulo, desc){
+    document.getElementById('gate-icon').textContent = '🔐';
+    document.getElementById('gate-titulo').textContent = titulo;
+    document.getElementById('gate-desc').textContent = desc;
+    document.getElementById('gate-btn').style.display = 'inline-flex';
+  }
+
+  // 1. Verificar sesión
+  const { data: { session } } = await sb.auth.getSession();
+  if(!session){
+    bloquear('Acceso privado', 'Necesitas iniciar sesión para usar esta herramienta.');
+    return;
+  }
+
+  // 2. Verificar que tiene acceso comprado a la herramienta
+  const { data: accesos } = await sb
+    .from('accesos')
+    .select('id, producto:productos(tipo)')
+    .eq('user_id', session.user.id)
+    .eq('activo', true);
+
+  const tieneAcceso = accesos?.some(a => a.producto?.tipo === 'herramienta');
+
+  if(!tieneAcceso){
+    bloquear('Sin acceso', 'No tienes acceso a esta herramienta. Adquiérela desde el catálogo para usarla.');
+    return;
+  }
+
+  // 3. Todo bien — ocultar gate y mostrar herramienta
+  gate.style.display = 'none';
+  document.body.style.overflow = '';
+})();
+</script>
+
+  
 <div class="app-shell">
   <div class="topbar">
     <div class="brand">
