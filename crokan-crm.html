@@ -803,8 +803,20 @@ async function confirmarPedido(pedidoId, userId, items){
   if(error){ notif('Error al confirmar pedido.','error'); return; }
  
   if(items?.length){
-    const acc = items.map(i=>({user_id:userId,producto_id:i.producto_id,pedido_id:pedidoId,activo:true}));
-    await sb.from('accesos').upsert(acc,{onConflict:'user_id,producto_id'});
+    const acc = items.map(i=>({
+      user_id: userId,
+      producto_id: i.producto_id,
+      pedido_id: pedidoId,
+      activo: true
+    }));
+    const { error: accError } = await sb.from('accesos')
+      .upsert(acc, {onConflict:'user_id,producto_id'});
+    if(accError){
+      // Si falla el upsert, intentar insert ignorando duplicados
+      for(const a of acc){
+        await sb.from('accesos').insert([a]).then(()=>{}).catch(()=>{});
+      }
+    }
   }
  
   // Enviar correo de confirmación
