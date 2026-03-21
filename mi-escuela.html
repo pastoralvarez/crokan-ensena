@@ -149,6 +149,11 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#f4f8ff;color:#0f172a
 /* ─── GATE ─── */
 .gate-pantalla{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:linear-gradient(160deg,#fff,#eff6ff,#fdf2f8)}
 .gate-caja{background:white;border-radius:20px;padding:2.25rem 1.75rem;max-width:380px;width:100%;text-align:center;box-shadow:0 6px 28px rgba(59,130,246,.13);border:1px solid #dbeafe}
+ 
+/* ─── REPRODUCTOR RESPONSIVE ─── */
+@media(max-width:650px){
+  #sec-reproductor .repr-grid{grid-template-columns:1fr!important}
+}
 </style>
 </head>
 <body>
@@ -197,6 +202,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#f4f8ff;color:#0f172a
     <button class="nav-tab" onclick="irA('perfil')" id="tab-perfil">
       <span class="nav-tab-icon">👤</span>Mi perfil
     </button>
+    <!-- Tab reproductor oculto - se activa solo al abrir un curso -->
+    <button class="nav-tab" onclick="irA('reproductor')" id="tab-reproductor" style="display:none">
+      <span class="nav-tab-icon">🎬</span>Viendo
+    </button>
   </nav>
  
   <!-- CONTENIDO -->
@@ -224,8 +233,66 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#f4f8ff;color:#0f172a
       </div>
     </div>
  
-    <!-- ══ PEDIDOS ══ -->
-    <div class="seccion" id="sec-pedidos">
+    <!-- ══ REPRODUCTOR ══ -->
+    <div class="seccion" id="sec-reproductor">
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap">
+        <button onclick="irA('biblioteca')" style="background:none;border:none;cursor:pointer;color:#2563eb;font-size:.82rem;font-weight:600;font-family:inherit;display:flex;align-items:center;gap:.3rem">
+          ← Volver a la biblioteca
+        </button>
+      </div>
+      <!-- INFO DEL CURSO -->
+      <div class="card" style="margin-bottom:0">
+        <div style="display:flex;align-items:flex-start;gap:1rem;flex-wrap:wrap">
+          <div id="repr-icono" style="font-size:2.5rem;flex-shrink:0"></div>
+          <div style="flex:1;min-width:0">
+            <div id="repr-tipo" style="font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:.2rem"></div>
+            <div id="repr-nombre" style="font-family:'Fraunces',serif;font-size:1.15rem;font-weight:600;color:#0f172a;margin-bottom:.3rem"></div>
+            <div id="repr-meta" style="font-size:.75rem;color:#94a3b8"></div>
+          </div>
+          <div style="flex-shrink:0;text-align:right">
+            <div style="font-size:.68rem;color:#94a3b8;margin-bottom:.3rem">Progreso</div>
+            <div id="repr-progreso-txt" style="font-family:'Fraunces',serif;font-size:1.2rem;font-weight:600;color:#2563eb">0%</div>
+          </div>
+        </div>
+        <div style="height:5px;background:#e2e8f0;border-radius:100px;overflow:hidden;margin-top:.85rem">
+          <div id="repr-progreso-bar" style="height:100%;border-radius:100px;background:linear-gradient(90deg,#60a5fa,#ec4899);transition:width .5s ease;width:0%"></div>
+        </div>
+      </div>
+ 
+      <div class="repr-grid" style="display:grid;grid-template-columns:1fr 300px;gap:1rem;align-items:start">
+ 
+        <!-- REPRODUCTOR VIDEO -->
+        <div>
+          <!-- Pantalla vacía cuando no hay clase seleccionada -->
+          <div id="repr-placeholder" style="background:#0f172a;border-radius:14px;aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;color:rgba(255,255,255,.5)">
+            <div style="font-size:3rem;margin-bottom:.5rem">🎬</div>
+            <div style="font-size:.85rem">Selecciona una clase para comenzar</div>
+          </div>
+          <!-- Contenedor del iframe protegido -->
+          <div id="repr-video-wrap" style="display:none;border-radius:14px;overflow:hidden;aspect-ratio:16/9;position:relative;background:#000">
+            <iframe id="repr-iframe"
+              style="width:100%;height:100%;border:none;position:absolute;inset:0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
+            <!-- Capa anti-clic derecho para dificultar inspección -->
+            <div style="position:absolute;inset:0;z-index:1" oncontextmenu="return false"></div>
+          </div>
+          <!-- Info de la clase activa -->
+          <div id="repr-clase-info" style="display:none;margin-top:.75rem;padding:.85rem 1rem;background:white;border-radius:10px;border:1px solid #dbeafe">
+            <div id="repr-clase-nombre" style="font-size:.88rem;font-weight:600;color:#0f172a;margin-bottom:.25rem"></div>
+            <div id="repr-clase-estado" style="font-size:.72rem;color:#94a3b8"></div>
+          </div>
+        </div>
+ 
+        <!-- LISTA DE CLASES -->
+        <div class="card" style="padding:1rem;max-height:500px;overflow-y:auto">
+          <div style="font-size:.75rem;font-weight:700;color:#334155;margin-bottom:.75rem">Contenido del curso</div>
+          <div id="repr-clases-lista"></div>
+        </div>
+ 
+      </div>
+    </div>
       <div class="card">
         <div class="card-titulo">🧾 Historial de pedidos</div>
         <div id="ped-cargando"><span class="spinner"></span></div>
@@ -362,6 +429,15 @@ function irA(sec){
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('sec-'+sec).classList.add('activa');
   document.getElementById('tab-'+sec).classList.add('active');
+  // Pausar video si sale del reproductor
+  if(sec!=='reproductor'){
+    clearInterval(checkInterval);
+    const iframe=document.getElementById('repr-iframe');
+    if(iframe) iframe.src='';
+    document.getElementById('repr-placeholder').style.display='flex';
+    document.getElementById('repr-video-wrap').style.display='none';
+    document.getElementById('repr-clase-info').style.display='none';
+  }
   if(sec==='pedidos') cargarPedidos();
   if(sec==='comprar') cargarProductosComprar();
 }
@@ -433,7 +509,165 @@ async function cargarBiblioteca(){
   document.getElementById('bib-contenido').style.display='block';
 }
  
-function verCurso(){notif('Próximamente: reproductor de clases 🎬','info')}
+// ── REPRODUCTOR DE CURSOS ──
+let cursoActual = null;
+let progresoActual = {};
+let ytPlayer = null;
+let checkInterval = null;
+let claseActualIndex = -1;
+ 
+async function verCurso(productoId){
+  // Cargar producto y progreso
+  const [{data:prod},{data:progData}] = await Promise.all([
+    sb.from('productos').select('*').eq('id',productoId).single(),
+    sb.from('progreso').select('*').eq('user_id',usuario.id).eq('producto_id',productoId)
+  ]);
+  if(!prod){ notif('No se pudo cargar el curso.','error'); return; }
+  cursoActual = prod;
+  progresoActual = {};
+  (progData||[]).forEach(p=>{ progresoActual[p.clase_index]=p.completada; });
+ 
+  // Parsear clases
+  const clases = parsearClases(prod);
+ 
+  // Calcular progreso
+  const total = clases.length;
+  const completadas = clases.filter((_,i)=>progresoActual[i]).length;
+  const pct = total > 0 ? Math.round((completadas/total)*100) : 0;
+ 
+  // Llenar info del curso
+  document.getElementById('repr-icono').textContent = prod.icono||'🎂';
+  document.getElementById('repr-tipo').textContent = 'Curso';
+  document.getElementById('repr-nombre').textContent = prod.nombre;
+  document.getElementById('repr-meta').textContent = [prod.num_clases,prod.duracion].filter(Boolean).join(' · ');
+  document.getElementById('repr-progreso-txt').textContent = pct+'%';
+  document.getElementById('repr-progreso-bar').style.width = pct+'%';
+ 
+  // Renderizar lista de clases
+  renderClasesLista(clases, prod);
+ 
+  // Mostrar tab y navegar
+  document.getElementById('tab-reproductor').style.display='';
+  irA('reproductor');
+ 
+  // Abrir primera clase no completada
+  const primeraNoVista = clases.findIndex((_,i)=>!progresoActual[i]);
+  if(primeraNoVista >= 0) abrirClase(primeraNoVista, clases[primeraNoVista], prod.id);
+}
+ 
+function parsearClases(prod){
+  // Las clases vienen del campo modulos (una por línea) con URL de video opcional
+  // Formato: "Nombre del módulo | https://youtube.com/watch?v=ID"
+  // O solo: "Nombre del módulo"
+  const lineas = (prod.modulos||'').split('\n').filter(l=>l.trim());
+  return lineas.map((linea,i)=>{
+    const partes = linea.split('|').map(p=>p.trim());
+    return { nombre: partes[0]||`Clase ${i+1}`, videoUrl: partes[1]||null };
+  });
+}
+ 
+function extraerYoutubeId(url){
+  if(!url) return null;
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+  return match ? match[1] : null;
+}
+ 
+function renderClasesLista(clases, prod){
+  const lista = document.getElementById('repr-clases-lista');
+  if(!clases.length){
+    lista.innerHTML='<div style="font-size:.8rem;color:#94a3b8;text-align:center;padding:1rem">No hay clases configuradas aún.</div>';
+    return;
+  }
+  lista.innerHTML = clases.map((c,i)=>{
+    const completada = !!progresoActual[i];
+    const tieneVideo = !!c.videoUrl;
+    return `<div id="clase-item-${i}" onclick="${tieneVideo?`abrirClase(${i},parsearClases(cursoActual)[${i}],cursoActual.id)`:`notif('Esta clase aún no tiene video disponible.','info')`}"
+      style="display:flex;align-items:center;gap:.65rem;padding:.65rem .5rem;border-radius:8px;cursor:${tieneVideo?'pointer':'default'};transition:.2s;margin-bottom:.25rem;border:1px solid transparent"
+      onmouseover="this.style.background='#f8faff';this.style.borderColor='#dbeafe'"
+      onmouseout="this.style.background='';this.style.borderColor='transparent'">
+      <div style="width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;
+        ${completada?'background:#dcfce7;color:#15803d':tieneVideo?'background:#dbeafe;color:#2563eb':'background:#f1f5f9;color:#94a3b8'}">
+        ${completada?'✓':i+1}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.8rem;font-weight:${completada?'600':'500'};color:${completada?'#15803d':'#334155'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.nombre}</div>
+        ${!tieneVideo?'<div style="font-size:.65rem;color:#94a3b8">Sin video aún</div>':''}
+      </div>
+      ${tieneVideo?`<div style="font-size:.8rem;color:#94a3b8">▶</div>`:''}
+    </div>`;
+  }).join('');
+}
+ 
+function abrirClase(index, clase, productoId){
+  const videoId = extraerYoutubeId(clase.videoUrl);
+  if(!videoId){ notif('Esta clase aún no tiene video disponible.','info'); return; }
+ 
+  claseActualIndex = index;
+ 
+  // Destacar clase activa en la lista
+  document.querySelectorAll('[id^="clase-item-"]').forEach(el=>el.style.background='');
+  const claseEl = document.getElementById('clase-item-'+index);
+  if(claseEl) claseEl.style.background='#eff6ff';
+ 
+  // Info de la clase
+  document.getElementById('repr-clase-nombre').textContent = clase.nombre;
+  document.getElementById('repr-clase-estado').textContent = progresoActual[index] ? '✓ Completada' : 'En progreso...';
+  document.getElementById('repr-clase-info').style.display='block';
+ 
+  // Cargar video de forma protegida - solo el ID, nunca la URL completa
+  // Desactivar controles de descarga y forzar no-copy
+  const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&fs=1&disablekb=0`;
+  const iframe = document.getElementById('repr-iframe');
+  iframe.src = embedUrl;
+  document.getElementById('repr-placeholder').style.display='none';
+  document.getElementById('repr-video-wrap').style.display='block';
+ 
+  // Iniciar seguimiento de progreso
+  clearInterval(checkInterval);
+  if(!progresoActual[index]){
+    let tiempoViendo = 0;
+    const duracionEstimada = 600; // 10 min estimado por defecto
+    checkInterval = setInterval(()=>{
+      tiempoViendo += 5;
+      const porcentajeVisto = tiempoViendo / duracionEstimada;
+      if(porcentajeVisto >= 0.40){
+        clearInterval(checkInterval);
+        marcarClaseCompletada(index, productoId);
+      }
+    }, 5000); // cada 5 segundos
+  }
+}
+ 
+async function marcarClaseCompletada(index, productoId){
+  if(progresoActual[index]) return; // ya estaba marcada
+  progresoActual[index] = true;
+ 
+  await sb.from('progreso').upsert([{
+    user_id: usuario.id,
+    producto_id: productoId,
+    clase_index: index,
+    completada: true,
+    updated_at: new Date().toISOString()
+  }],{onConflict:'user_id,producto_id,clase_index'});
+ 
+  // Actualizar UI
+  const clases = parsearClases(cursoActual);
+  const total = clases.length;
+  const completadas = clases.filter((_,i)=>progresoActual[i]).length;
+  const pct = total > 0 ? Math.round((completadas/total)*100) : 0;
+ 
+  document.getElementById('repr-progreso-txt').textContent = pct+'%';
+  document.getElementById('repr-progreso-bar').style.width = pct+'%';
+  document.getElementById('repr-clase-estado').textContent = '✓ Clase completada';
+ 
+  // Actualizar el item en la lista
+  renderClasesLista(clases, cursoActual);
+  // Resaltar la clase activa de nuevo
+  const claseEl = document.getElementById('clase-item-'+index);
+  if(claseEl) claseEl.style.background='#eff6ff';
+ 
+  notif('✓ Clase marcada como completada','success');
+}
  
 // ── PEDIDOS ──
 async function cargarPedidos(){
